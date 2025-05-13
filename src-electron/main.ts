@@ -89,27 +89,35 @@ ipcMain.handle("print-label", async (event, options) => {
   };
 
   return win.webContents.print(printOptions, (success, error) => {
-    if (!success) console.error("打印失败22222:", error);
+    if (!success) {
+        console.error("打印失败22222:", error)
+    };
     win.close();
   });
 });
-ipcMain.handle("get-printers", async () => {
-  try {
+ipcMain.handle('print-dom-element', async (event, htmlContent) => {
     const win = new BrowserWindow({ show: false });
-    const printers = win.webContents.getPrinters();
-    console.log("可用的打印机:", printers);
-    return printers;
-  } catch (error) {
-    console.error("获取打印机列表失败:", error);
-    // 返回一个包含系统默认打印机的模拟列表
-    return [
-      {
-        name: "default",
-        displayName: "默认打印机",
-        isDefault: true,
-      },
-    ];
-  }
+
+    try {
+        await win.loadURL(`data:text/html,${encodeURIComponent(htmlContent)}`);
+
+        return new Promise((resolve) => {
+            win.webContents.print({ silent: true }, (success) => {
+                win.close();
+                resolve(success);
+            });
+        });
+    } catch (error) {
+        win.close();
+        throw error;
+    }
+});
+ipcMain.handle("get-printers", async () => {
+    const win = BrowserWindow.getFocusedWindow()
+    if (!win || win.isDestroyed()) {
+        throw new Error('没有可用的窗口')
+    }
+    return win.webContents.getPrinters()
 });
 
 ipcMain.on("consolelog", () => {
