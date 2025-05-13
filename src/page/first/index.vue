@@ -4,10 +4,12 @@
     <div class="box">12121</div>
   </DragPopup>
   <button @click="go">组件导航页</button>
-  <button @click="show = !show">开启popup</button>
+  <!-- <button @click="show = !show">开启popup</button> -->
 
-   <input type="file" id="fileInput" />
-<pre id="fileContent"></pre>
+  <div class="">
+    <input type="file" id="fileInput" />
+    <pre id="fileContent"></pre>
+  </div>
 
   <div class="">
     <select id="printer-select" style="width: 300px; height: 30px">
@@ -18,7 +20,7 @@
   </div>
 
   <div id="label-designer">
-    <canvas id="barcode" width="300" height="200"></canvas>
+    <canvas id="barcode" width="200" height="100"></canvas>
   </div>
 
   <div class="toolbox">
@@ -30,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref,onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import DragPopup from "../../components/DragPopup.vue";
 import JsBarcode from "jsbarcode";
@@ -39,15 +41,14 @@ import JsBarcode from "jsbarcode";
 const router = useRouter();
 
 onMounted(() => {
-  document.getElementById('fileInput').addEventListener('change', async function(e) {
+  document.getElementById("fileInput").addEventListener("change", async function (e) {
     const file = e.target.files[0];
     if (!file) return;
 
     try {
-        loadFile(file.path)
-    
+      loadFile(file.path);
     } catch (err) {
-      console.error('文件读取失败:', err);
+      console.error("文件读取失败:", err);
     }
   });
 });
@@ -61,7 +62,7 @@ const getBarCode = () => {
   JsBarcode("#barcode", "601211KBD0000018", {
     format: "CODE128",
     lineColor: "#000",
-    width: 2,
+    width: 1.3,
     height: 40,
     displayValue: true,
   });
@@ -69,10 +70,10 @@ const getBarCode = () => {
 
 async function loadFile(url) {
   try {
-    const content = await ipcRenderer.invoke('read-file', url);
+    const content = await ipcRenderer.invoke("read-file", url);
     console.log(content);
   } catch (err) {
-    console.error('读取文件失败:', err);
+    console.error("读取文件失败:", err);
   }
 }
 
@@ -87,7 +88,7 @@ async function printLabel() {
     //     if (!defaultPrinter) throw new Error('没有设置默认打印机');
     //     printerName = defaultPrinter.name;
     // }
-    const element = document.getElementById('label-designer');
+    const element = document.getElementById("label-designer");
     const html = `
     <!DOCTYPE html>
     <html>
@@ -96,10 +97,10 @@ async function printLabel() {
   `;
 
     // 准备打印选项
-   
+
     // // 调用主进程的打印方法
-    const success = await ipcRenderer.invoke('print-dom-element', html);
-    if (!success) throw new Error('打印失败');
+    const success = await ipcRenderer.invoke("print-dom-element", html);
+    if (!success) throw new Error("打印失败");
     //  const printOptions = {
     //   url: window.location.href, // 或直接使用当前页面的 URL: window.location.href
     //   printerName: "TSC TX210",

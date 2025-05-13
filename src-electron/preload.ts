@@ -8,6 +8,7 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
       ipcRenderer.send(channel);
     }
   },
+    openFile: () => ipcRenderer.invoke('dialog:openFile'),
   on: (channel, func) => {
     ipcRenderer.on(channel, func);
   },

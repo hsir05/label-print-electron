@@ -12,6 +12,8 @@ const fs = require('fs');
 const { promisify } = require('util');
 const readFileAsync = promisify(fs.readFile);
 
+const { dialog } = require('electron')
+
 
 // 忽略Electron的警告
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true";
@@ -80,8 +82,44 @@ ipcMain.handle("ev:send-desktop-capturer_source", async (_event, _args) => {
     ...(await selfWindws()),
   ];
 });
+ipcMain.handle('dialog:openFile', async () => {
+    const { canceled, filePaths } = await dialog.showOpenDialog({
+        properties: ['openFile'],
+        filters: [
+            { name: 'Excel Files', extensions: ['xlsx', 'xls', 'csv'] },
+            { name: 'All Files', extensions: ['*'] }
+        ]
+    })
 
+    if (!canceled && filePaths.length > 0) {
+        const filePath = filePaths[0]
+        const data = fs.readFileSync(filePath)
+        return {
+            fileName: path.basename(filePath),
+            data: data.buffer
+        }
+    }
+    return null
+})
+ipcMain.handle('open-file-dialog', async (event) => {
+    const result = await dialog.showOpenDialog({
+        properties: ['openFile'],
+        filters: [
+            { name: 'Excel Files', extensions: ['xlsx', 'xls', 'csv'] },
+            { name: 'All Files', extensions: ['*'] }
+        ]
+    })
 
+    if (!result.canceled && result.filePaths.length > 0) {
+        const filePath = result.filePaths[0]
+        const data = fs.readFileSync(filePath)
+        return {
+            fileName: path.basename(filePath),
+            data: data.buffer
+        }
+    }
+    return null
+})
 ipcMain.handle('read-file', async (event, filePath) => {
     try {
         const content = await fs.readFile(filePath, 'utf-8')
