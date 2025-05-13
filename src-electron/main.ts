@@ -8,6 +8,10 @@ import {
 } from "electron";
 // import path from "path";
 const path = require("path");
+const fs = require('fs');
+const { promisify } = require('util');
+const readFileAsync = promisify(fs.readFile);
+
 
 // 忽略Electron的警告
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true";
@@ -20,7 +24,7 @@ let win: null | BrowserWindow = null;
 const createWindow = async () => {
   // Menu.setApplicationMenu(null);
   win = new BrowserWindow({
-    title: "董员外",
+    title: "标签打印",
     width: 1000,
     height: 800,
     icon: path.join(__dirname, "../public/logo.ico"),
@@ -75,6 +79,18 @@ ipcMain.handle("ev:send-desktop-capturer_source", async (_event, _args) => {
     ...(await desktopCapturer.getSources({ types: ["window", "screen"] })),
     ...(await selfWindws()),
   ];
+});
+
+
+ipcMain.handle('read-file', async (event, filePath) => {
+    try {
+        const content = await fs.readFile(filePath, 'utf-8')
+        return content
+        // const content = await readFileAsync(filePath, 'utf-8');
+        // return content;
+    } catch (err) {
+        throw err;
+    }
 });
 
 // 在主进程中设置打印处理器

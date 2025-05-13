@@ -6,9 +6,8 @@
   <button @click="go">组件导航页</button>
   <button @click="show = !show">开启popup</button>
 
-  <div id="label-designer">
-    <canvas id="label-canvas" width="300" height="200"></canvas>
-  </div>
+   <input type="file" id="fileInput" />
+<pre id="fileContent"></pre>
 
   <div class="">
     <select id="printer-select" style="width: 300px; height: 30px">
@@ -26,17 +25,32 @@
     <button id="add-barcode" @click="getBarCode">生成条码</button>
     <button id="add-qrcode" @click="selectPrinter">选择打印机</button>
     <button id="add-qrcode" @click="printLabel">打印</button>
+    <button id="add-qrcode" @click="loadFile">读取文件</button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref,onMounted } from "vue";
 import { useRouter } from "vue-router";
 import DragPopup from "../../components/DragPopup.vue";
 import JsBarcode from "jsbarcode";
 // import { ipcRenderer } from "electron";
 
 const router = useRouter();
+
+onMounted(() => {
+  document.getElementById('fileInput').addEventListener('change', async function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+        loadFile(file.path)
+    
+    } catch (err) {
+      console.error('文件读取失败:', err);
+    }
+  });
+});
 const go = () => {
   router.push("/componentsNav");
 };
@@ -52,6 +66,16 @@ const getBarCode = () => {
     displayValue: true,
   });
 };
+
+async function loadFile(url) {
+  try {
+    const content = await ipcRenderer.invoke('read-file', url);
+    console.log(content);
+  } catch (err) {
+    console.error('读取文件失败:', err);
+  }
+}
+
 const selectPrinter = async () => {
   const printers = await ipcRenderer.invoke("get-printers");
   printers.value = printers;
