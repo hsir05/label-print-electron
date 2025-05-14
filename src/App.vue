@@ -4,7 +4,7 @@
   </n-config-provider>
 </template>
 <script setup lang="ts">
-  import { NConfigProvider, NInput, NDatePicker, NSpace } from 'naive-ui'
+  import { NConfigProvider } from 'naive-ui'
   import { zhCN, dateZhCN } from 'naive-ui'
 
   const themeColor = {
