@@ -25,19 +25,19 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
       return ipcRenderer.sendSync(channel);
     }
   },
-  getprinters: () => {
-    ipcRenderer.invoke("get-printers").then((printers) => {
-        console.log(333, printers);
+//   getprinters: () => {
+//     ipcRenderer.invoke("get-printers").then((printers) => {
+//         console.log(333, printers);
         
-    //   const select = document.getElementById("printer-select");
-    //   printers.forEach((printer) => {
-    //     const option = document.createElement("option");
-    //     option.value = printer.name;
-    //     option.textContent = printer.name;
-    //     select.appendChild(option);
-    //   });
-    });
-  },
+//     //   const select = document.getElementById("printer-select");
+//     //   printers.forEach((printer) => {
+//     //     const option = document.createElement("option");
+//     //     option.value = printer.name;
+//     //     option.textContent = printer.name;
+//     //     select.appendChild(option);
+//     //   });
+//     });
+//   },
   invoke: (channel, ...args) => {
     try {
       return ipcRenderer.invoke(channel, ...args);

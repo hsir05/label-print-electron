@@ -7,11 +7,11 @@ const router = createRouter({
     // 设置首页
     {
       path: '/',
-      component: () => import('../page/first/index.vue')
+      component: () => import('../page/index.vue')
     },
     { 
-      path: '/componentsNav', // 组件导航页
-      component: () => import('../page/componentsNav/index.vue') 
+        path: '/record', // 组件导航页
+        component: () => import('../page/record.vue') 
     },
   ],
 })
