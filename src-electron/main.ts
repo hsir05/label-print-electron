@@ -1,17 +1,15 @@
 import {
-  app,
-  BrowserWindow,
-  desktopCapturer,
-  ipcMain,
-  Menu,
+    app,
+    BrowserWindow,
+    desktopCapturer,
+    ipcMain,
+    Menu,
     webContents, dialog
 } from "electron";
-// import path from "path";
-const path = require("path");
+import path from "path";
 const fs = require('fs');
-const { promisify } = require('util');
-// const readFileAsync = promisify(fs.readFile);
-
+// import { queryParam,insertParam,updateParam,deleteParam } from "./preload"
+// import { sqQuery, sqInsert, sqUpdate, sqDelete }  from "../src/utils/db"
 
 // 忽略Electron的警告
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true";
@@ -21,23 +19,21 @@ app.commandLine.appendSwitch("--ignore-certificate-errors", "true"); // 忽略�
 
 let win: null | BrowserWindow = null;
 
-
-
 const createWindow = async () => {
-   
-  win = new BrowserWindow({
-    title: "标签打印",
-    width: 1200,
-    height: 800,
-    icon: path.join(__dirname, "../public/logo.ico"),
-    webPreferences: {
-      webSecurity: false,
-      nodeIntegration: true,
-      contextIsolation: true,
-      webviewTag: true,
-      preload: path.join(__dirname, "preload.js"),
-    },
-  });
+
+    win = new BrowserWindow({
+        title: "标签打印",
+        width: 1200,
+        height: 800,
+        icon: path.join(__dirname, "../public/logo.ico"),
+        webPreferences: {
+            webSecurity: false,
+            nodeIntegration: true,
+            contextIsolation: true,
+            webviewTag: true,
+            preload: path.join(__dirname, "preload.js"),
+        },
+    });
     const template = [
         {
             label: 'SN码生成',
@@ -93,26 +89,39 @@ const createWindow = async () => {
     ipcMain.handle("get-printers", async () => {
         try {
             const win = new BrowserWindow({ show: false });
-            return win.webContents.getPrinters()
-            // 或者: return await desktopCapturer.getPrinters()
+            return win.webContents.getPrintersAsync()
         } catch (error) {
             console.error('获取打印机失败:', error)
             return []
         }
     });
 
-  if (process.env.VITE_DEV_SERVER_URL) {
-    win.loadURL(process.env.VITE_DEV_SERVER_URL);
-    win.webContents.openDevTools();
-  } else {
-    win.loadFile(path.join(__dirname, "../dist/index.html"));
-  }
+    // ipcMain.handle('sqQuery', (_: IpcMainInvokeEvent, param: queryParam): Promise<any> => {
+    //     return sqQuery(param);
+    // });
+    // ipcMain.handle('sqInsert', (_: IpcMainInvokeEvent, param: insertParam): Promise<any> => {
+    //     return sqInsert(param);
+    // });
+    // ipcMain.handle('sqUpdate', (_: IpcMainInvokeEvent, param: updateParam): Promise<any> => {
+    //     return sqUpdate(param);
+    // });
+    // ipcMain.handle('sqDelete', (_: IpcMainInvokeEvent, param: deleteParam): Promise<any> => {
+    //     return sqDelete(param);
+    // });
+
+
+    if (process.env.VITE_DEV_SERVER_URL) {
+        win.loadURL(process.env.VITE_DEV_SERVER_URL);
+        win.webContents.openDevTools();
+    } else {
+        win.loadFile(path.join(__dirname, "../dist/index.html"));
+    }
 };
 
 app.whenReady().then(createWindow);
 
 app.on("window-all-closed", () => {
-  app.exit();
+    app.exit();
 });
 
 ipcMain.handle('dialog:openFile', async () => {
@@ -165,11 +174,11 @@ ipcMain.handle('read-file', async (event, filePath) => {
 
 
 ipcMain.on("consolelog", () => {
-  console.log("打印 this is 111111");
+    console.log("打印 this is 111111");
 });
 ipcMain.on("consolelog_2", (event, data) => {
-  console.log("打印 this is ", data);
+    console.log("打印 this is ", data);
 });
 ipcMain.on("consolelog_3", (event, data) => {
-  console.log("打印 this is ", data);
+    console.log("打印 this is ", data);
 });
