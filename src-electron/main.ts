@@ -8,8 +8,8 @@ import {
 } from "electron";
 import path from "path";
 const fs = require('fs');
-// import { queryParam,insertParam,updateParam,deleteParam } from "./preload"
-// import { sqQuery, sqInsert, sqUpdate, sqDelete }  from "../src/utils/db"
+const { createDataTable } = require("./service/database.ts")
+
 
 // 忽略Electron的警告
 process.env["ELECTRON_DISABLE_SECURITY_WARNINGS"] = "true";
@@ -38,18 +38,24 @@ const createWindow = async () => {
         {
             label: 'SN码生成',
             click: () => {
+                // @ts-ignore
                 win.webContents.send('navigate-to', '/');
             }
         },
         {
             label: '历史记录',
             click: () => {
+                // @ts-ignore
                 win.webContents.send('navigate-to', '/record');
             }
         },
     ]
     const myMenu = Menu.buildFromTemplate(template)
     Menu.setApplicationMenu(myMenu);
+
+    // createTable()
+    
+
 
     // 在主进程中设置打印处理器
     ipcMain.handle("print-label", async (event, options) => {
@@ -96,16 +102,31 @@ const createWindow = async () => {
         }
     });
 
-    // ipcMain.handle('sqQuery', (_: IpcMainInvokeEvent, param: queryParam): Promise<any> => {
+    // 获取用户信息
+    ipcMain.handle('get-users', (event, query) => {
+        return new Promise((resolve, reject) => {
+            db.all('SELECT * FROM users', [], (err, rows) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(rows);
+                    console.log(rows)
+                }
+            })
+        })
+    })
+
+
+    // ipcMain.handle('sqQuery', (_: any, param: queryParam): Promise<any> => {
     //     return sqQuery(param);
     // });
-    // ipcMain.handle('sqInsert', (_: IpcMainInvokeEvent, param: insertParam): Promise<any> => {
+    // ipcMain.handle('sqInsert', (_: any, param: insertParam): Promise<any> => {
     //     return sqInsert(param);
     // });
-    // ipcMain.handle('sqUpdate', (_: IpcMainInvokeEvent, param: updateParam): Promise<any> => {
+    // ipcMain.handle('sqUpdate', (_: any, param: updateParam): Promise<any> => {
     //     return sqUpdate(param);
     // });
-    // ipcMain.handle('sqDelete', (_: IpcMainInvokeEvent, param: deleteParam): Promise<any> => {
+    // ipcMain.handle('sqDelete', (_: any, param: deleteParam): Promise<any> => {
     //     return sqDelete(param);
     // });
 
@@ -116,7 +137,10 @@ const createWindow = async () => {
     } else {
         win.loadFile(path.join(__dirname, "../dist/index.html"));
     }
+
+    createDataTable()
 };
+
 
 app.whenReady().then(createWindow);
 
