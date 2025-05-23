@@ -49,8 +49,8 @@
             <div class="" style="margin-left:20px">
                 <NButton type="primary" @click="submit" style="width: 90px">生成</NButton>
                 <NButton @click="reset" style="width: 90px;margin-left:10px;">重置</NButton>
-                <NButton @click="config" style="width: 90px;margin-left:10px;">配置</NButton>
-                <NButton @click="record" style="width: 90px;margin-left:10px;">配置2</NButton>
+                <NButton @click="config" style="width: 90px;margin-left:10px;">数据管理</NButton>
+                <NButton @click="record" style="width: 90px;margin-left:10px;">历史记录</NButton>
             </div>
         </NForm>
         <!-- </NCard> -->
@@ -152,29 +152,29 @@ const rules = {
 };
 onMounted(() => { });
 
-const getDb=async()=>{
-//    try {
-//     let res = await sqQuery()
-//     console.log(res);
-//    } catch (err) {
-//     console.log(err);
-//    }
+const getDb = async () => {
+    //    try {
+    //     let res = await sqQuery()
+    //     console.log(res);
+    //    } catch (err) {
+    //     console.log(err);
+    //    }
 }
-const insertDB=async()=>{
-//    try {
-//     let res = await getDatabase()
-//     console.log(res);
-//    } catch (err) {
-//     console.log(err);
-//    }
+const insertDB = async () => {
+    //    try {
+    //     let res = await getDatabase()
+    //     console.log(res);
+    //    } catch (err) {
+    //     console.log(err);
+    //    }
 }
-const queryDB=async()=>{
-//    try {
-//     let res = await sqQuery()
-//     console.log(res);
-//    } catch (err) {
-//     console.log(err);
-//    }
+const queryDB = async () => {
+    //    try {
+    //     let res = await sqQuery()
+    //     console.log(res);
+    //    } catch (err) {
+    //     console.log(err);
+    //    }
 }
 const submit = (e) => {
     e.preventDefault()

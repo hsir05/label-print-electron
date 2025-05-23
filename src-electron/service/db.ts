@@ -2,7 +2,7 @@
 import path from "path";
 import { DataSource } from "typeorm";
 import { app } from "electron";
-import { BetterSqlite3ConnectionOptions } from "typeorm/driver/better-sqlite3/BetterSqlite3ConnectionOptions";
+// import { BetterSqlite3ConnectionOptions } from "typeorm/driver/better-sqlite3/BetterSqlite3ConnectionOptions";
 import { MessageModel } from "./model";
 
 export class DataBase {
@@ -18,7 +18,7 @@ export class DataBase {
             app.getName(),
             `./data/${database}.db`
         );
-        let options: BetterSqlite3ConnectionOptions = {
+        let options:any = {
             type: "better-sqlite3",
             entities: [MessageModel],
             database: basePath,

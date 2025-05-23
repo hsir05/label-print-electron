@@ -8,7 +8,7 @@ import {
 } from "electron";
 import path from "path";
 const fs = require('fs');
-const { createDataTable } = require("./service/database.ts")
+// const { createDataTable } = require("./service/database.ts")
 
 
 // 忽略Electron的警告
@@ -138,7 +138,7 @@ const createWindow = async () => {
         win.loadFile(path.join(__dirname, "../dist/index.html"));
     }
 
-    createDataTable()
+    // createDataTable()
 };
 
 
