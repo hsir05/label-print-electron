@@ -1,4 +1,4 @@
-import { sqDelete, sqInsert, sqQuery, sqUpdate,openFile } from '@/common/db'
+import { sqDelete, sqInsert, sqQuery, sqUpdate,openFile,exportToExcel } from '../../../common/db'
 import { Button, Space } from 'antd'
 import React from 'react'
 const DBPage = () => {
@@ -36,7 +36,7 @@ const DBPage = () => {
         })
     }
 
-    const uploadFile = (key) => {
+    const uploadFile = (key:string) => {
         let name = ''
         switch (key) {
             case '1':
@@ -46,6 +46,17 @@ const DBPage = () => {
             default:
                 break;
         }
+    }
+    const exportToFile = () => {
+        const sampleData = [
+            ['姓名', '年龄', '城市'],
+            ['张三', 28, '北京'],
+            ['李四', 32, '上海'],
+            ['王五', 25, '广州']
+          ];
+          
+          // 调用导出函数
+          exportToExcel(sampleData, '示例数据');
     }
     const handleOpenFile = async () => {
         openFile().then((res) => {
@@ -90,6 +101,7 @@ const DBPage = () => {
             <Button onClick={updateHandle}>更新数据</Button>
             <Button onClick={deleteHandle}>删除数据</Button>
 
+            <Button onClick={exportToFile}>导出</Button>
             <Button onClick={handleOpenFile}>PCBA厂数据</Button>
         </Space>
     </div>

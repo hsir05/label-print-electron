@@ -20,6 +20,19 @@ export const openFile = async () => {
         console.error("Error reading file:", error);
     }
 };
+export const exportToExcel = (data: any[][], filename: string, sheetName: string = 'Sheet1') => {
+    // 创建工作簿
+    const workbook = XLSX.utils.book_new();
+
+    // 将二维数组转换为工作表
+    const worksheet = XLSX.utils.aoa_to_sheet(data);
+
+    // 将工作表添加到工作簿
+    XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+
+    // 写入并下载文件
+    XLSX.writeFile(workbook, `${filename}.xlsx`);
+  };
 export const sqQuery = (param: queryParam) => {
   if (import.meta.env.VITE_CURRENT_RUN_MODE === "render") {
     return window.electronAPI.sqQuery(param);

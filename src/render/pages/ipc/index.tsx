@@ -1,4 +1,4 @@
-import { Elog, Log4 } from "@/common/log";
+import { Elog, Log4 } from "../../../common/log";
 import React, { useEffect, useState } from "react";
 import { Button, Space } from "antd";
 
