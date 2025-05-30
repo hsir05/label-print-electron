@@ -13,7 +13,8 @@ export const openFile = async () => {
 
             if (jsonData.length > 0) {
                 let yearList = jsonData.slice(1);
-                console.log(yearList);
+                // console.log(yearList);
+                return yearList;
             }
         }
     } catch (error) {

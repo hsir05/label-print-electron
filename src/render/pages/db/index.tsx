@@ -12,7 +12,7 @@ interface DataType {
     tags: string[];
 }
 
-const operations = <Space><Button type="primary">上传</Button><Button type="primary">删除</Button></Space>;
+
 
 const DBPage = () => {
     const [activeKey, setActiveKey] = React.useState<string>('1');
@@ -33,46 +33,40 @@ const DBPage = () => {
     const data: DataType[] = []
     const items:TabsProps['items'] = [
         {
-            key: '1',
+            key: 'pcba',
             label: `PCBA厂数据`,
             children: <Table<DataType> columns={columns} dataSource={data} />,
         },
         {
-            key: '2',
+            key: 'category',
             label: `产品类别`,
             children: <Table<DataType> columns={columns} dataSource={data} />,
         },
         {
-            key: '3',
+            key: 'specifications',
             label: `产品规格`,
             children: <Table<DataType> columns={columns} dataSource={data} />,
         },
         {
-            key: '4',
+            key: 'series',
             label: `产品代系`,
             children: <Table<DataType> columns={columns} dataSource={data} />,
         },
         {
-            key: '5',
+            key: 'productionId',
             label: `产品序列号`,
             children: <Table<DataType> columns={columns} dataSource={data} />,
         },
     ]
-    const sqInsertHandle = () => {
-        sqInsert({
-            table: 'test',
-            data: {
-                name: 'a',
-                age: 18
-            }
-        }).then((res: any) => {
+    const sqInsertHandle = (table: string, data: any) => {
+        sqInsert({table: table, data: data}).then((res: any) => {
             console.log(res)
         })
     }
 
     const queryHandle = () => {
-        sqQuery({
-            sql: 'SELECT * FROM test',
+        sqQuery({ 
+            sql: `SELECT * FROM ${activeKey}`,
             params: []
         }).then((res: any) => {
             console.log(res)
@@ -114,37 +108,17 @@ const DBPage = () => {
         exportToExcel(sampleData, '示例数据');
     }
     const handleOpenFile = async () => {
-        openFile().then((res) => {
-            console.log(res)
+        openFile().then((res)=> {
+            const data = res.map((item: any) => ({label: item[0], value: item[1]}));
+            sqInsertHandle(activeKey, data)
         }).catch((err) => {
             console.error("Error opening file:", err);
         });
-        // try {
-        //     const result = await window.ipcRenderer.openFile();
-        //     if (result) {
-        //         // 读取Excel文件
-        //         const workbook = XLSX.read(result.data, { type: "array" });
-        //         const firstSheetName = workbook.SheetNames[0];
-        //         const worksheet = workbook.Sheets[firstSheetName];
-
-        //         // 转换为JSON
-        //         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-        //         if (jsonData.length > 0) {
-        //             let yearList = jsonData.slice(1);
-        //             console.log(yearList);
-        //         }
-        //     }
-        // } catch (error) {
-        //     console.error("Error reading file:", error);
-        // }
     };
 
     const deleteHandle = () => {
-        sqDelete({
-            table: 'test',
-            condition: 'name = "a"'
-        }).then((res: any) => {
+        //  condition: 'name = "a"'
+        sqDelete({table: activeKey,condition:''}).then((res: any) => {
             console.log(res)
         })
     }
@@ -152,9 +126,11 @@ const DBPage = () => {
     const handleTabChange = (key: string) => {
         console.log(key);
         setActiveKey(key);
+
+        queryHandle()
     };
 
-
+    const operations = <Space><Button type="primary" onClick={handleOpenFile}>上传</Button><Button type="primary" onClick={deleteHandle}>删除</Button></Space>;
     return <div>
         {/* <Space>
             <Button onClick={sqInsertHandle}>增加数据</Button>
@@ -166,7 +142,7 @@ const DBPage = () => {
             <Button onClick={handleOpenFile}>PCBA厂数据</Button>
         </Space> */}
 
-        <Tabs defaultActiveKey="1" onChange={handleTabChange} activeKey={activeKey} tabBarExtraContent={operations} items={items} />
+        <Tabs defaultActiveKey="pcba" onChange={handleTabChange} activeKey={activeKey} tabBarExtraContent={operations} items={items} />
     </div>
 }
 
