@@ -1,5 +1,6 @@
 import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 import { join,resolve } from 'path';
+import * as path from "path";
 
 export type WindowPoolOptions = BrowserWindowConstructorOptions & {
   url: string,
@@ -7,11 +8,9 @@ export type WindowPoolOptions = BrowserWindowConstructorOptions & {
 }
 
 export const getOpenUrl = (url:string) => {
-  const baseUrl =
-    import.meta.env.MODE === "dev"
-    ? import.meta.env.VITE_DEV_SERVER_URL
-      : `file://${resolve(__dirname, "../render/index.html")}`;
-  const newUrl = url.startsWith('http') || url.startsWith('https')? url : `${baseUrl}#${url}`;
+  const isDev = process.env.NODE_ENV === 'development' || process.env.VITE_DEV_SERVER_URL;
+  const baseUrl = isDev ? (process.env.VITE_DEV_SERVER_URL || 'http://localhost:5173/'): `file://${resolve(__dirname, '../index.html')}`; // 正确指向asar内的render/index.html
+  const newUrl = url.startsWith('http') || url.startsWith('https') ? url : `${baseUrl}#${url}`;
   return newUrl;
 }
 
@@ -37,7 +36,14 @@ class WindowPoolManager {
     const win = new BrowserWindow({ ...windowOptions, show: false });
     const idData = windowOptions.url;
     const newUrl = getOpenUrl(windowOptions.url);
-    win.loadURL(newUrl);
+    // win.loadURL(newUrl);
+
+      if (process.env.NODE_ENV === 'development') {
+          win.loadURL(newUrl);
+      } else {
+          win.loadFile(path.join(__dirname, 'dist/index.html'))
+      }
+
     this.windowPools.set(idData, win);
     return {
       id: idData,

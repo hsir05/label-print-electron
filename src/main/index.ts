@@ -2,7 +2,7 @@ import { BrowserWindow, Menu, MessageChannelMain, app } from "electron";
 import { join } from "path";
 import { initIpc } from "./ipc";
 import { openWindow } from "./window";
-import { initTestTask } from "@/common/schedule/testTask";
+// import { initTestTask } from "@/common/schedule/testTask";
 
 const initMenu = (mainWindow: BrowserWindow) => {
   const menu = Menu.buildFromTemplate([
@@ -33,7 +33,8 @@ const main = async () => {
   });
 
   if (import.meta.env.MODE === "dev") {
-    mainWindow.webContents.openDevTools({ mode: "detach", activate: true });
+    //   mainWindow.webContents.openDevTools({ mode: "detach", activate: true });
+      mainWindow.webContents.openDevTools();
   }
 
   const workWindow = openWindow({

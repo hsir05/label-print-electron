@@ -3,7 +3,7 @@ import path from "path";
 import { builtinModules } from "module";
 import { fileURLToPath } from "url";
 import { defineConfig } from "vite";
-import electron from 'vite-plugin-electron'
+// import electron from 'vite-plugin-electron'
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
@@ -15,16 +15,13 @@ const sharedResolve = {
 
 export default defineConfig({
     root: path.resolve(__dirname, "../src/main"),
-    envDir: cwd(),
+    // envDir: cwd(),
+    base: './',
     resolve: sharedResolve,
-    plugins: [
-        electron({
-            entry: path.resolve(__dirname, "../src/main/index.ts"), // 你的 Electron 主进程入口文件
-        }),
-    ],
     build: {
         outDir: path.resolve(__dirname, "../dist/main"),
         minify: false,
+        assetsDir: 'assets', // 静态资源目录
         sourcemap: true,
         watch: {},
         lib: {
@@ -44,4 +41,11 @@ export default defineConfig({
         emptyOutDir: true,
         chunkSizeWarningLimit: 2048,
     },
+    // plugins: [{
+    //     name: 'fix-paths',
+    //     transformIndexHtml (html) {
+    //         console.log('----------------------', html);
+    //         return html.replace(/"\/assets\//g, '"./assets/')
+    //     },
+    // },],
 })
