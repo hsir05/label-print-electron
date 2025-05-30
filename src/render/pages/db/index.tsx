@@ -149,6 +149,11 @@ const DBPage = () => {
         })
     }
 
+    const handleTabChange = (key: string) => {
+        console.log(key);
+        setActiveKey(key);
+    };
+
 
     return <div>
         {/* <Space>
@@ -161,7 +166,7 @@ const DBPage = () => {
             <Button onClick={handleOpenFile}>PCBA厂数据</Button>
         </Space> */}
 
-        <Tabs defaultActiveKey="1" activeKey={activeKey} tabBarExtraContent={operations} items={items} />
+        <Tabs defaultActiveKey="1" onChange={handleTabChange} activeKey={activeKey} tabBarExtraContent={operations} items={items} />
     </div>
 }
 
