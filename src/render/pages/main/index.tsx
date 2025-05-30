@@ -248,7 +248,7 @@ const Main = () => {
             </Form>
             <h2>SN码预览</h2>
             <Button type="primary" onClick={createBarCode}>生成条码 </Button>
-            <Button type="primary" onClick={createBarCode}>选择打印机 </Button>
+            {/* <Button type="primary" onClick={createBarCode}>选择打印机 </Button> */}
             <Button type="primary" onClick={printLabel}>打印</Button>
 
             <div id="label-designer">

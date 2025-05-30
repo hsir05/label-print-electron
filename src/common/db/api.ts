@@ -1,5 +1,6 @@
 import { app } from "electron";
-import * as path from "path";
+// import * as path from "path";
+import path from 'path'
 import * as sqlite3 from "sqlite3";
 
 const userDataPath = app.getPath("userData");

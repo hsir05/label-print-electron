@@ -3,7 +3,6 @@ import path from "path";
 import { builtinModules } from "module";
 import { fileURLToPath } from "url";
 import { defineConfig } from "vite";
-// import electron from 'vite-plugin-electron'
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 
@@ -41,11 +40,4 @@ export default defineConfig({
         emptyOutDir: true,
         chunkSizeWarningLimit: 2048,
     },
-    // plugins: [{
-    //     name: 'fix-paths',
-    //     transformIndexHtml (html) {
-    //         console.log('----------------------', html);
-    //         return html.replace(/"\/assets\//g, '"./assets/')
-    //     },
-    // },],
 })

@@ -1,8 +1,63 @@
-import { sqDelete, sqInsert, sqQuery, sqUpdate,openFile,exportToExcel } from '../../../common/db'
-import { Button, Space } from 'antd'
+import { sqDelete, sqInsert, sqQuery, sqUpdate, openFile, exportToExcel } from '../../../common/db'
+import { Button, Space, Table, Tabs } from 'antd'
+import { AndroidOutlined, AppleOutlined } from '@ant-design/icons';
 import React from 'react'
-const DBPage = () => {
+import type { TableProps,TabsProps  } from 'antd';
 
+interface DataType {
+    key: string;
+    name: string;
+    age: number;
+    address: string;
+    tags: string[];
+}
+
+const operations = <Space><Button type="primary">上传</Button><Button type="primary">删除</Button></Space>;
+
+const DBPage = () => {
+    const [activeKey, setActiveKey] = React.useState<string>('1');
+
+    const columns: TableProps<DataType>['columns'] = [
+        {
+            title: '名称',
+            dataIndex: 'name',
+            key: 'name',
+            render: (text) => <a>{text}</a>,
+        },
+        {
+            title: '值',
+            dataIndex: 'value',
+            key: 'value',
+        },
+    ];
+    const data: DataType[] = []
+    const items:TabsProps['items'] = [
+        {
+            key: '1',
+            label: `PCBA厂数据`,
+            children: <Table<DataType> columns={columns} dataSource={data} />,
+        },
+        {
+            key: '2',
+            label: `产品类别`,
+            children: <Table<DataType> columns={columns} dataSource={data} />,
+        },
+        {
+            key: '3',
+            label: `产品规格`,
+            children: <Table<DataType> columns={columns} dataSource={data} />,
+        },
+        {
+            key: '4',
+            label: `产品代系`,
+            children: <Table<DataType> columns={columns} dataSource={data} />,
+        },
+        {
+            key: '5',
+            label: `产品序列号`,
+            children: <Table<DataType> columns={columns} dataSource={data} />,
+        },
+    ]
     const sqInsertHandle = () => {
         sqInsert({
             table: 'test',
@@ -11,7 +66,7 @@ const DBPage = () => {
                 age: 18
             }
         }).then((res: any) => {
-            console.log(res) 
+            console.log(res)
         })
     }
 
@@ -36,13 +91,13 @@ const DBPage = () => {
         })
     }
 
-    const uploadFile = (key:string) => {
+    const uploadFile = (key: string) => {
         let name = ''
         switch (key) {
             case '1':
                 handleOpenFile()
                 break;
-    
+
             default:
                 break;
         }
@@ -53,10 +108,10 @@ const DBPage = () => {
             ['张三', 28, '北京'],
             ['李四', 32, '上海'],
             ['王五', 25, '广州']
-          ];
-          
-          // 调用导出函数
-          exportToExcel(sampleData, '示例数据');
+        ];
+
+        // 调用导出函数
+        exportToExcel(sampleData, '示例数据');
     }
     const handleOpenFile = async () => {
         openFile().then((res) => {
@@ -71,10 +126,10 @@ const DBPage = () => {
         //         const workbook = XLSX.read(result.data, { type: "array" });
         //         const firstSheetName = workbook.SheetNames[0];
         //         const worksheet = workbook.Sheets[firstSheetName];
-    
+
         //         // 转换为JSON
         //         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-    
+
         //         if (jsonData.length > 0) {
         //             let yearList = jsonData.slice(1);
         //             console.log(yearList);
@@ -94,8 +149,9 @@ const DBPage = () => {
         })
     }
 
+
     return <div>
-        <Space>
+        {/* <Space>
             <Button onClick={sqInsertHandle}>增加数据</Button>
             <Button onClick={queryHandle}>查询数据</Button>
             <Button onClick={updateHandle}>更新数据</Button>
@@ -103,7 +159,9 @@ const DBPage = () => {
 
             <Button onClick={exportToFile}>导出</Button>
             <Button onClick={handleOpenFile}>PCBA厂数据</Button>
-        </Space>
+        </Space> */}
+
+        <Tabs defaultActiveKey="1" activeKey={activeKey} tabBarExtraContent={operations} items={items} />
     </div>
 }
 
