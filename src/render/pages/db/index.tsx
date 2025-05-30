@@ -23,6 +23,9 @@ const DBPage = () => {
             title: 'ID',
             dataIndex: 'id',
             align:'center',
+            render: (_,record,index) => (
+                <Space>{index+1}</Space>
+              ),
           },
         {
             title: '名称',
