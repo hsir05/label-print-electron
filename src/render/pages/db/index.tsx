@@ -1,6 +1,6 @@
 import { sqDelete, sqInsert, sqQuery, sqUpdate, openFile, exportToExcel } from '../../../common/db'
 import { Button, Space, Table, Tabs } from 'antd'
-import React, { useState, useEffect } from 'react';
+import React, {  useEffect } from 'react';
 import type { TableProps,TabsProps  } from 'antd';
 
 
