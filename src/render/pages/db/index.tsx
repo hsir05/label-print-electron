@@ -5,9 +5,9 @@ import type { TableProps,TabsProps  } from 'antd';
 
 
 interface DataType {
-    id: number;
-    label: string;
-    value: number;
+  id: number;
+  label: string;
+  value: string;
 }
 
 const DBPage = () => {
@@ -42,33 +42,69 @@ const DBPage = () => {
         },
     ];
 
-    const items:TabsProps['items'] = [
-        {
-            key: 'pcba',
-            label: `PCBA厂数据`,
-            children: <Table<DataType> rowKey={'id'} bordered  columns={columns} dataSource={data} />,
-        },
-        {
-            key: 'category',
-            label: `产品类别`,
-            children: <Table<DataType> rowKey={'id'} columns={columns} dataSource={data} />,
-        },
-        {
-            key: 'specifications',
-            label: `产品规格`,
-            children: <Table<DataType> rowKey={'id'} columns={columns} dataSource={data} />,
-        },
-        {
-            key: 'series',
-            label: `产品代系`,
-            children: <Table<DataType> rowKey={'id'} columns={columns} dataSource={data} />,
-        },
-        {
-            key: 'productionId',
-            label: `产品序列号`,
-            children: <Table<DataType> rowKey={'id'} columns={columns} dataSource={data} />,
-        },
-    ]
+    const items: TabsProps["items"] = [
+      {
+        key: "pcba",
+        label: `PCBA厂数据`,
+        children: (
+          <Table<DataType>
+            rowKey={"id"}
+            bordered
+            columns={columns}
+            dataSource={data}
+          />
+        ),
+      },
+      {
+        key: "category",
+        label: `产品类别`,
+        children: (
+          <Table<DataType> rowKey={"id"} columns={columns} dataSource={data} />
+        ),
+      },
+      {
+        key: "specifications",
+        label: `产品规格`,
+        children: (
+          <Table<DataType> rowKey={"id"} columns={columns} dataSource={data} />
+        ),
+      },
+      {
+        key: "series",
+        label: `产品代系`,
+        children: (
+          <Table<DataType> rowKey={"id"} columns={columns} dataSource={data} />
+        ),
+      },
+      {
+        key: "productionId",
+        label: `产品序列号`,
+        children: (
+          <Table<DataType> rowKey={"id"} columns={columns} dataSource={data} />
+        ),
+      },
+      {
+        key: "country",
+        label: `国别`,
+        children: (
+          <Table<DataType> rowKey={"id"} columns={columns} dataSource={data} />
+        ),
+      },
+      {
+        key: "year",
+        label: `年`,
+        children: (
+          <Table<DataType> rowKey={"id"} columns={columns} dataSource={data} />
+        ),
+      },
+      {
+        key: "week",
+        label: `周`,
+        children: (
+          <Table<DataType> rowKey={"id"} columns={columns} dataSource={data} />
+        ),
+      },
+    ];
     const sqInsertHandle = (table: string, data: any) => {
         sqInsert({table: table, data: data}).then(() => {
             queryHandle(activeKey)

@@ -113,6 +113,36 @@ class Database {
           `,
                 });
             }).then(() => {
+                return this.query({
+                    sql: `
+            CREATE TABLE IF NOT EXISTS year (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              label varchar,
+              value varchar
+            )
+          `,
+                });
+            }).then(() => {
+                return this.query({
+                    sql: `
+            CREATE TABLE IF NOT EXISTS week (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              label varchar,
+              value varchar
+            )
+          `,
+                });
+            }).then(() => {
+                return this.query({
+                    sql: `
+            CREATE TABLE IF NOT EXISTS country (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              label varchar,
+              value varchar
+            )
+          `,
+                });
+            }).then(() => {
                 console.log("Database schema initialized.");
             }).catch((err) => {
                 console.error("Error initializing database schema:", err);
