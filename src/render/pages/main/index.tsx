@@ -3,7 +3,7 @@ import type { FormProps } from "antd";
 import { Button, Form, Input, Space, Checkbox, Col, Row, Select } from "antd";
 import { sqQuery } from "../../../common/db";
 import JsBarcode from "jsbarcode";
-import type { CheckboxProps } from "antd";
+import { getISOWeek } from "date-fns";
 import "./index.less";
 
 const { Option } = Select;
@@ -52,17 +52,43 @@ const Main = () => {
         queryHandle("country");
         queryHandle("year");
         queryHandle("week");
+        
     }, []);
 
-    const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+    const handleYear=(data: DataType[])=>{
+        const year = new Date().getFullYear();
+        const currentYear = data.find((item: DataType) => item.label === year.toString());
+       if(currentYear) {
+            form.setFieldsValue({
+                year: currentYear.value,
+            });
+        }
+    }
+
+    const handleWeek = (data: DataType[]) => {
+      const week = getISOWeek(new Date());
+      const currentWeek = data.find(
+        (item: DataType) => item.label === week.toString(),
+      );
+      if (currentWeek) {
+        form.setFieldsValue({
+          week: currentWeek.value,
+        });
+      }
+    };
+
+    const onFinish: FormProps<FieldType>["onFinish"] = (values:any) => {
         console.log("Success:", values);
     };
     const onReset = () => {
         console.log(form);
         form.resetFields();
+
+        handleYear(yearData);
+        handleWeek(weekData);
     };
     const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
-        errorInfo,
+        errorInfo:any,
     ) => {
         console.log("Failed:", errorInfo);
     };
@@ -126,9 +152,11 @@ const Main = () => {
                     break;
                 case "year":
                     setYearData(res);
+                    handleYear(res);
                     break;
                 case "week":
                     setWeekData(res);
+                    handleWeek(res);
                     break;
                 default:
                     break;
@@ -264,7 +292,7 @@ const Main = () => {
             </Col>
             <Col span={8}>
               <Form.Item label="年">
-                <Space.Compact>
+                <Space.Compact style={{ width: "100%" }}>
                   <Form.Item<FieldType> name="checkboxYear" noStyle>
                     <Checkbox
                       onChange={onYearCheck}
@@ -278,32 +306,17 @@ const Main = () => {
                     rules={[{ required: true, message: "请输入年" }]}
                   >
                     <Input
-                      style={{ width: "42%" }}
+                      style={{ width: "85%" }}
                       disabled={!yearDisabled}
                       placeholder="请输入年"
                     />
-                  </Form.Item>
-                  <Form.Item name="selectYear" className="ml-15" noStyle>
-                    <Select
-                      placeholder="请选择年"
-                      style={{ width: "42%" }}
-                      onChange={onYearChange}
-                    >
-                      {yearData.map((item, index) => {
-                        return (
-                          <Option value={item.value} key={index}>
-                            {item.label}
-                          </Option>
-                        );
-                      })}
-                    </Select>
                   </Form.Item>
                 </Space.Compact>
               </Form.Item>
             </Col>
             <Col span={8}>
               <Form.Item label="周">
-                <Space.Compact>
+                <Space.Compact style={{ width: "100%" }}>
                   <Form.Item name="checkboxWeek" noStyle>
                     <Checkbox
                       onChange={onWeekCheck}
@@ -317,25 +330,10 @@ const Main = () => {
                     rules={[{ required: true, message: "请选择周" }]}
                   >
                     <Input
-                      style={{ width: "42%" }}
+                      style={{ width: "85%" }}
                       disabled={!weekDisabled}
                       placeholder="请输入周"
                     />
-                  </Form.Item>
-                  <Form.Item name="selectWeek" className="ml-15" noStyle>
-                    <Select
-                      placeholder="请选择周"
-                      style={{ width: "42%" }}
-                      onChange={onWeekChange}
-                    >
-                      {weekData.map((item, index) => {
-                        return (
-                          <Option value={item.value} key={index}>
-                            {item.label}
-                          </Option>
-                        );
-                      })}
-                    </Select>
                   </Form.Item>
                 </Space.Compact>
               </Form.Item>
@@ -362,32 +360,22 @@ const Main = () => {
                 </Select>
               </Form.Item>
             </Col>
-            {/* <Col span={8}>
-                        <Form.Item<FieldType>
-                            label="流水号"
-                            name="serialNumber"
-                            rules={[{ required: true, message: "请选择流水号" }]}>
-                            <Select
-                                placeholder="请选择流水号"
-                                onChange={onGenderChange}
-                                allowClear
-                            >
-                                <Option value="male">male</Option>
-                                <Option value="female">female</Option>
-                                <Option value="other">other</Option>
-                            </Select>
-                        </Form.Item>
-                    </Col> */}
+            <Col span={8}>
+              <Form.Item label={null}>
+                <Button type="primary" htmlType="submit">
+                  生成{" "}
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={onReset}
+                  style={{ marginLeft: 8 }}
+                >
+                  重置{" "}
+                </Button>
+              </Form.Item>
+            </Col>
           </Row>
 
-          <Form.Item label={null}>
-            <Button type="primary" htmlType="submit">
-              生成{" "}
-            </Button>
-            <Button type="primary" onClick={onReset} style={{ marginLeft: 8 }}>
-              重置{" "}
-            </Button>
-          </Form.Item>
         </Form>
         <h2>SN码预览</h2>
         <Button type="primary" onClick={createBarCode}>
