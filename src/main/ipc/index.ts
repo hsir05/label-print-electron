@@ -1,13 +1,11 @@
 import { BrowserWindow, ipcMain, IpcMainEvent, IpcMainInvokeEvent, dialog, shell } from "electron"
 import { Elog, LOG_PARAMS, Log4 } from "@/common/log"
-import { join } from "path"
 import { deleteParam, insertParam, queryParam, sqDelete, sqInsert, sqQuery, sqUpdate, updateParam } from "@/common/db"
-import { getOpenUrl, openWindow } from "../window"
 import path from "path";
 const fs = require('fs');
 export interface IpcMainWindow {
     mainWindow: BrowserWindow,
-    workWindow: BrowserWindow
+    // workWindow: BrowserWindow
 }
 
 const openUrlByDefaultBrowser = (e: IpcMainEvent, url: string, options?: Electron.OpenExternalOptions) => {
@@ -24,9 +22,6 @@ const initIpcOn = (winodws: IpcMainWindow) => {
     })
     ipcMain.on('counterValueCallback', (event: IpcMainEvent, value: string) => {
         console.log('counterValueCallback', value)
-    })
-    ipcMain.on('mainSendMsgToWork', (event: IpcMainEvent, msg: string) => {
-        winodws.workWindow.webContents.send('workSendMsgToMain', msg)
     })
     ipcMain.on('Elog', (event: IpcMainEvent, arg: LOG_PARAMS) => {
         const { type, value } = arg
@@ -76,17 +71,6 @@ const initIpcHandle = () => {
         const msg = args[0];
         return Promise.resolve(`I got ${msg}, ok`);
     });
-    ipcMain.handle('openNewWindow', (event: IpcMainInvokeEvent, url: string) => {
-        openWindow({
-            width: 800,
-            height: 600,
-            webPreferences: {
-                preload: join(__dirname, "../preload/index.cjs"),
-            },
-            url,
-            brandNew: true,
-        });
-    })
     ipcMain.handle('openFile', async () => {
         const { canceled, filePaths } = await dialog.showOpenDialog({
             properties: ['openFile'],
@@ -124,18 +108,6 @@ const initIpcHandle = () => {
             throw error;
         }
     });
-
-    ipcMain.handle('openNewWindowByDefaultHandle', (event: IpcMainInvokeEvent, url: string) => {
-        const win = new BrowserWindow({
-            width: 800,
-            height: 600,
-            webPreferences: {
-                preload: join(__dirname, "../preload/index.cjs"),
-            },
-        });
-        const newUrl = getOpenUrl(url)
-        win.loadURL(newUrl);
-    })
     ipcMain.handle('sqQuery', (event: IpcMainInvokeEvent, param: queryParam): Promise<any> => {
         return sqQuery(param);
     });

@@ -1,4 +1,4 @@
-import { BrowserWindow, BrowserWindowConstructorOptions, app } from 'electron';
+import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
 import { join, resolve, dirname } from 'path';
 import * as path from "path";
 import { fileURLToPath } from 'url'
@@ -57,7 +57,7 @@ class WindowPoolManager {
   private initPool() {
     for (let i = 0; i < this.windowPoolSize; i++) {
       this.createPoolWindow({
-        width: 1200,
+        width: 1400,
         height: 800,
         show: false, // 预创建窗口应为隐藏
         webPreferences: {

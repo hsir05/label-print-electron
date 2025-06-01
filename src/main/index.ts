@@ -1,4 +1,4 @@
-import { BrowserWindow, Menu, MessageChannelMain, app } from "electron";
+import { BrowserWindow, Menu, app } from "electron";
 import { join } from "path";
 import { initIpc } from "./ipc";
 import { openWindow } from "./window";
@@ -21,9 +21,8 @@ const initMenu = (mainWindow: BrowserWindow) => {
 };
 
 const main = async () => {
-    const { port1, port2 } = new MessageChannelMain();
     const mainWindow = openWindow({
-        width: 1400,
+        width: 400,
         height: 800,
         webPreferences: {
             preload: join(__dirname, "../preload/index.cjs"),
@@ -36,27 +35,9 @@ const main = async () => {
         mainWindow.webContents.openDevTools();
     }
 
-    const workWindow = openWindow({
-        width: 1400,
-        height: 600,
-        webPreferences: {
-            preload: join(__dirname, "../preload/index.cjs"),
-        },
-        url: `/work`,
-        show: false,
-    });
-
     initMenu(mainWindow);
     initIpc({
-        mainWindow,
-        workWindow,
-    });
-    mainWindow.once("ready-to-show", () => {
-        mainWindow.webContents.postMessage("portMain", null, [port1]);
-    });
-
-    workWindow.once("ready-to-show", () => {
-        workWindow.webContents.postMessage("portWork", null, [port2]);
+        mainWindow
     });
 };
 
