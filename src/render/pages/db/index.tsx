@@ -3,7 +3,6 @@ import { Button, Space, Table, Tabs } from 'antd'
 import React, {  useEffect } from 'react';
 import type { TableProps,TabsProps  } from 'antd';
 
-
 interface DataType {
   id: number;
   label: string;

@@ -2,9 +2,8 @@ import  WindowPoolManager, {getOpenUrl} from './windowPool';
 import type {WindowPoolOptions} from './windowPool';
 
 export const initWindowManager = () => {
-  return WindowPoolManager.getInstance(2);
+  return WindowPoolManager.getInstance(1);
 }
-
 
 export const openWindow = (windowOptions:WindowPoolOptions) => {
   const windowManager = initWindowManager();

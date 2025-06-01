@@ -209,7 +209,7 @@ const Main = () => {
         // ];
 
         // 调用导出函数
-        exportToExcel(sampleData, `SN${snCode}`);
+        // exportToExcel(sampleData, `SN${snCode}`);
     };
 
     const btn = (
@@ -219,7 +219,7 @@ const Main = () => {
           onClick={exportToFile}
           className="ml-15"
           disabled={!snCode}
-        >
+        >   
           输出列表
         </Button>
         <Button

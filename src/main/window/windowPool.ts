@@ -1,12 +1,15 @@
-import { BrowserWindow, BrowserWindowConstructorOptions } from 'electron';
-import { join,resolve } from 'path';
+import { BrowserWindow, BrowserWindowConstructorOptions, app } from 'electron';
+import { join, resolve, dirname } from 'path';
 import * as path from "path";
+import { fileURLToPath } from 'url'
+
 
 export type WindowPoolOptions = BrowserWindowConstructorOptions & {
   url: string,
   brandNew?: boolean,
 }
-
+const __dirname = dirname(fileURLToPath(import.meta.url))
+ 
 export const getOpenUrl = (url:string) => {
   const isDev = process.env.NODE_ENV === 'development' || process.env.VITE_DEV_SERVER_URL;
   const baseUrl = isDev ? (process.env.VITE_DEV_SERVER_URL || 'http://localhost:5173/'): `file://${resolve(__dirname, '../index.html')}`; // 正确指向asar内的render/index.html
@@ -56,11 +59,11 @@ class WindowPoolManager {
       this.createPoolWindow({
         width: 1200,
         height: 800,
-        show: false,
+        show: false, // 预创建窗口应为隐藏
         webPreferences: {
           preload: join(__dirname, '../preload/index.cjs'),
         },
-        url: `/preWindow/${i}`, // 使用占位符 URL
+        url: `/preWindow/${i}`,
       });
     }
   }
@@ -117,27 +120,12 @@ class WindowPoolManager {
 
     win.on('closed', () => {
       this.windowPools.delete(idData);
-      this.ensurePreWindowPool();
+      // 只在窗口池已空时关闭所有剩余窗口，确保 window-all-closed 能被触发
+      if (this.windowPools.size === 0) {
+        BrowserWindow.getAllWindows().forEach(w => w.close());
+      }
     })
-
-    this.ensurePreWindowPool();
-
     return win;
-  }
-
-  private ensurePreWindowPool() {
-    const currentPreWindowCount = Array.from(this.windowPools.keys()).filter((key) => key.startsWith('/preWindow')).length;
-    if (currentPreWindowCount < this.windowPoolSize) {
-      this.createPoolWindow({
-        width: 800,
-        height: 600,
-        show: false,
-        webPreferences: {
-          preload: join(__dirname, '../preload/index.cjs'),
-        },
-        url: `/preWindow/${currentPreWindowCount + 1}`,
-      });
-    }
   }
 }
 
