@@ -28,8 +28,10 @@ export const exportToExcel = (data: any[][], filename: string, sheetName: string
   };
 export const sqQuery = (param: queryParam) => {
   if (import.meta.env.VITE_CURRENT_RUN_MODE === "render") {
+    console.log('--------------3333');
     return window.electronAPI.sqQuery(param);
   } else {
+    console.log('--------------44444');
     return import("./api").then((module) => module.sqQuery(param));
   }
 };

@@ -50,5 +50,4 @@ app.on('window-all-closed', () => {
 
 app.whenReady().then(() => {
     main();
-    //   initTestTask();
 });

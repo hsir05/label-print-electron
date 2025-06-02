@@ -209,7 +209,7 @@ const Main = () => {
         // ];
 
         // 调用导出函数
-        // exportToExcel(sampleData, `SN${snCode}`);
+        exportToExcel(sampleData, `SN${snCode}`);
     };
 
     const btn = (

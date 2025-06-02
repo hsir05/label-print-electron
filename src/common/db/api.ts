@@ -1,6 +1,6 @@
 import { app } from "electron";
-// import * as path from "path";
-import path from 'path'
+import * as path from "path";
+// import path from 'path'
 import * as sqlite3 from "sqlite3";
 
 // 获取用户数据目录
@@ -139,6 +139,17 @@ class Database {
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               label varchar,
               value varchar
+            )
+          `,
+                });
+            }).then(() => {
+                return this.query({
+                    sql: `
+            CREATE TABLE IF NOT EXISTS history (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              snCode varchar,
+              create_time varchar,
+              account varchar,
             )
           `,
                 });
