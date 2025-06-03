@@ -2,10 +2,6 @@ import { Button, Space, Table, Tabs } from 'antd'
 import React, {  useEffect } from 'react';
 import type { TableProps,TabsProps  } from 'antd';
 import {
-  sqDelete,
-  sqInsert,
-  sqQuery,
-  sqUpdate,
   openFile,
   exportToExcel,
 } from "../../../common/db"; 
@@ -111,31 +107,26 @@ const DBPage = () => {
         ),
       },
     ];
-    const sqInsertHandle = (table: string, data: any) => {
-        sqInsert({table: table, data: data}).then(() => {
-            queryHandle(activeKey)
-        })
-    }
+    const sqInsertHandle = async (table: string, data: any) => {
+    //   sqInsert({ table: table, data: data }).then(() => {
+    //     queryHandle(activeKey);
+    //   });
+      await window.electronAPI.sqInsert({ table: table, data: data });
+    };
 
-    const queryHandle = (tableName: string) => {
-        sqQuery({ 
-            sql: `SELECT * FROM ${tableName}`,
-            params: []
-        }).then((res: any) => {
-            setData(res)
-        })
-    }
+    const queryHandle =async (tableName: string) => {
+        // sqQuery({ 
+        //     sql: `SELECT * FROM ${tableName}`,
+        //     params: []
+        // }).then((res: any) => {
+        //     setData(res)
+        // })
 
-    const updateHandle = () => {
-        sqUpdate({
-            table: 'test',
-            data: {
-                age: 22
-            },
-            condition: 'name = "a"'
-        }).then((res: any) => {
-            console.log(res)
-        })
+        let res = await window.electronAPI.sqQuery({
+          sql: `SELECT * FROM ${tableName}`,
+          params: [],
+        });
+        setData(res);
     }
 
     const uploadFile = (key: string) => {
@@ -173,11 +164,10 @@ const DBPage = () => {
         });
     };
 
-    const deleteHandle = () => {
+    const deleteHandle = async() => {
         //  condition: 'name = "a"'
-        sqDelete({table: activeKey}).then(() => {
-            queryHandle(activeKey)
-        })
+        await window.electronAPI.sqDelete({ table: activeKey })
+        queryHandle(activeKey);
     }
 
     const handleTabChange = (key: string) => {
