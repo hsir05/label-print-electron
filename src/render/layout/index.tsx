@@ -27,10 +27,9 @@ function getItem(
 }
 
 const items: MenuItem[] = [
-  getItem('首页', '/main', <HomeOutlined />),
-//   getItem('IPC 通信', '/ipc', <CommentOutlined />),
-  getItem('历史记录', '/window', <WindowsOutlined />),
-  getItem('数据维护', '/db', <DatabaseOutlined />)
+  getItem("首页", "/main", <HomeOutlined />),
+  getItem("历史记录", "/history", <WindowsOutlined />),
+  getItem("数据维护", "/db", <DatabaseOutlined />),
 ];
 
 const App: React.FC = () => {

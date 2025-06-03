@@ -6,11 +6,7 @@ import {
 } from "react-router-dom";
 import App from "./app";
 import Main from "./pages/main";
-import Work from "./pages/work";
-import TestWindow from "./pages/testWindow";
-import PreWindow from "./pages/preWindow";
-import Ipc from "./pages/ipc";
-import Window from './pages/window'
+import History from "./pages/history";
 import Db from './pages/db'
 import './index.less';
 
@@ -27,24 +23,8 @@ const router = createHashRouter([
         element: <Main />,
       },
       {
-        path: "work",
-        element: <Work />,
-      },
-      {
-        path: "testWindow",
-        element: <TestWindow />,
-      },
-      {
-        path: "preWindow/:id",
-        element: <PreWindow />,
-      },
-      {
-        path: "ipc",
-        element: <Ipc />,
-      },
-      {
-        path: "window",
-        element: <Window />,
+        path: "history",
+        element: <History />,
       },
       {
         path: "db",

@@ -5,6 +5,7 @@ import * as sqlite3 from "sqlite3";
 
 // 获取用户数据目录
 const userDataPath = app.getPath("userData");
+
 const dbPath = path.join(userDataPath, "sqliteDatabase.db");
 
 export interface queryParam {
@@ -142,18 +143,20 @@ class Database {
             )
           `,
                 });
-            }).then(() => {
-                return this.query({
-                    sql: `
-            CREATE TABLE IF NOT EXISTS history (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              snCode varchar,
-              create_time varchar,
-              account varchar,
-            )
-          `,
-                });
-            }).then(() => {
+            })
+        //     .then(() => {
+        //         return this.query({
+        //             sql: `
+        //     CREATE TABLE IF NOT EXISTS history (
+        //       id INTEGER PRIMARY KEY AUTOINCREMENT,
+        //       snCode varchar,
+        //       create_time varchar,
+        //       account varchar,
+        //     )
+        //   `,
+        //         });
+        //     })
+            .then(() => {
                 console.log("Database schema initialized.");
             }).catch((err) => {
                 console.error("Error initializing database schema:", err);
@@ -247,7 +250,10 @@ export const sqQuery = async (param: queryParam) => {
     const db = await getDatabase();
     return db.query(param);
 };
-
+export const dbQuery = async (param: queryParam) => {
+    const db = await getDatabase();
+    return db.query(param);
+};
 export const sqInsert = async (param: insertParam) => {
     const db = await getDatabase();
     return db.insert(param);

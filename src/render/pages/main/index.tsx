@@ -11,12 +11,12 @@ import {
     Select,
     Card,
 } from "antd";
-import { sqQuery, exportToExcel } from "../../../common/db";
+import { sqQuery, exportToExcel } from "../../../common/db"; 
 import JsBarcode from "jsbarcode";
 import { getISOWeek } from "date-fns";
-import "./index.less";
+import "./index.less"; 
 
-const { Option } = Select;
+const { Option } = Select; 
 
 interface DataType {
     id: number;
@@ -59,6 +59,10 @@ const Main = () => {
     };
 
     useEffect(() => {
+       
+    }, []);
+
+    const init=() => {
         queryHandle("pcba");
         queryHandle("category");
         queryHandle("specifications");
@@ -67,7 +71,7 @@ const Main = () => {
         queryHandle("country");
         queryHandle("year");
         queryHandle("week");
-    }, []);
+    }
 
     const handleYear = (data: DataType[]) => {
         const year = new Date().getFullYear();
@@ -184,7 +188,7 @@ const Main = () => {
                     break;
             }
         });
-    };
+    }; 
     const onYearCheck = (e: any) => {
         setYearDisabled(e.target.checked);
     };
@@ -219,7 +223,7 @@ const Main = () => {
           onClick={exportToFile}
           className="ml-15"
           disabled={!snCode}
-        >   
+        >
           输出列表
         </Button>
         <Button
@@ -238,6 +242,13 @@ const Main = () => {
           onClick={printLabel}
           className="ml-15"
           disabled={!snCode}
+        >
+          打印
+        </Button>
+        <Button
+          type="primary"
+          onClick={init}
+          className="ml-15"
         >
           打印
         </Button>

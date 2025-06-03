@@ -8,7 +8,7 @@ export type WindowPoolOptions = BrowserWindowConstructorOptions & {
   url: string,
   brandNew?: boolean,
 }
-const __dirname = dirname(fileURLToPath(import.meta.url))
+const __dirname = dirname(fileURLToPath(import.meta.url)) 
  
 export const getOpenUrl = (url:string) => {
   const isDev = process.env.NODE_ENV === 'development' || process.env.VITE_DEV_SERVER_URL;
