@@ -11,11 +11,11 @@ import {
     Select,
     Card,
 } from "antd";
-import { sqQuery, exportToExcel } from "../../../common/db"; 
+import {  exportToExcel } from "../../../common/db"; 
 import JsBarcode from "jsbarcode";
 import { getISOWeek } from "date-fns";
 import "./index.less"; 
-
+ 
 const { Option } = Select; 
 
 interface DataType {
@@ -141,7 +141,6 @@ const Main = () => {
                 <html>
                 <body>${element?.outerHTML}</body>
                 </html> `;
-
             // 准备打印选项
 
             // // 调用主进程的打印方法  window.electronAPI.printDomElement
@@ -152,42 +151,79 @@ const Main = () => {
             console.error("打印出错:", error);
         }
     };
-    const queryHandle = (tableName: string) => {
-        sqQuery({
-            sql: `SELECT * FROM ${tableName}`,
-            params: [],
-        }).then((res: any) => {
-            switch (tableName) {
-                case "pcba":
-                    setPCBAData(res);
-                    break;
-                case "category":
-                    setCategoryData(res);
-                    break;
-                case "specifications":
-                    setSpecificationsData(res);
-                    break;
-                case "series":
-                    setSeriesData(res);
-                    break;
-                case "productionId":
-                    setProductionIdData(res);
-                    break;
-                case "country":
-                    setCountryData(res);
-                    break;
-                case "year":
-                    setYearData(res);
-                    handleYear(res);
-                    break;
-                case "week":
-                    setWeekData(res);
-                    handleWeek(res);
-                    break;
-                default:
-                    break;
-            }
+    const queryHandle = async (tableName: string) => {
+       let res = await window.electronAPI.sqQuery({
+          sql: `SELECT * FROM ${tableName}`,
+          params: [],
         });
+        console.log('---------',res);
+        
+        switch (tableName) {
+          case "pcba":
+            setPCBAData(res);
+            break;
+          case "category":
+            setCategoryData(res);
+            break;
+          case "specifications":
+            setSpecificationsData(res);
+            break;
+          case "series":
+            setSeriesData(res);
+            break;
+          case "productionId":
+            setProductionIdData(res);
+            break;
+          case "country":
+            setCountryData(res);
+            break;
+          case "year":
+            setYearData(res);
+            handleYear(res);
+            break;
+          case "week":
+            setWeekData(res);
+            handleWeek(res);
+            break;
+          default:
+            break;
+        }
+
+        // sqQuery({
+        //     sql: `SELECT * FROM ${tableName}`,
+        //     params: [],
+        // }).then((res: any) => {
+        //     switch (tableName) {
+        //         case "pcba":
+        //             setPCBAData(res);
+        //             break;
+        //         case "category":
+        //             setCategoryData(res);
+        //             break;
+        //         case "specifications":
+        //             setSpecificationsData(res);
+        //             break;
+        //         case "series":
+        //             setSeriesData(res);
+        //             break;
+        //         case "productionId":
+        //             setProductionIdData(res);
+        //             break;
+        //         case "country":
+        //             setCountryData(res);
+        //             break;
+        //         case "year":
+        //             setYearData(res);
+        //             handleYear(res);
+        //             break;
+        //         case "week":
+        //             setWeekData(res);
+        //             handleWeek(res);
+        //             break;
+        //         default:
+        //             break;
+        //     }
+        // });
     }; 
     const onYearCheck = (e: any) => {
         setYearDisabled(e.target.checked);

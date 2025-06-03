@@ -5,12 +5,11 @@ import * as sqlite3 from "sqlite3";
 
 // 获取用户数据目录
 const userDataPath = app.getPath("userData");
-
 const dbPath = path.join(userDataPath, "sqliteDatabase.db");
 
 export interface queryParam {
     sql: string;
-    params?: any[];
+    params?: any[]; 
 }
 
 export interface insertParam {

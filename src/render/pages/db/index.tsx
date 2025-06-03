@@ -1,7 +1,14 @@
-import { sqDelete, sqInsert, sqQuery, sqUpdate, openFile, exportToExcel } from '../../../common/db'
 import { Button, Space, Table, Tabs } from 'antd'
 import React, {  useEffect } from 'react';
 import type { TableProps,TabsProps  } from 'antd';
+import {
+  sqDelete,
+  sqInsert,
+  sqQuery,
+  sqUpdate,
+  openFile,
+  exportToExcel,
+} from "../../../common/db"; 
 
 interface DataType {
   id: number;

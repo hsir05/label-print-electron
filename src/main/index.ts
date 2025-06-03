@@ -45,7 +45,6 @@ const main = async () => {
 };
 
 app.on('window-all-closed', () => {
-    console.log('----------------32233');
     if (process.platform !== 'darwin') {
         app.quit();
     }

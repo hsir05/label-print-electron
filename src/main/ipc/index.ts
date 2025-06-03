@@ -1,5 +1,4 @@
 import { BrowserWindow, ipcMain, IpcMainEvent, IpcMainInvokeEvent, dialog, shell } from "electron"
-import { Elog, LOG_PARAMS, Log4 } from "@/common/log"
 import { deleteParam, insertParam, queryParam, sqDelete, sqInsert, sqQuery, sqUpdate, updateParam } from "@/common/db"
 import path from "path";
 const fs = require('fs');
@@ -19,49 +18,6 @@ const initIpcOn = (winodws: IpcMainWindow) => {
     })
     ipcMain.on('communicateWithEachOtherSendSyncMsg', (event: IpcMainEvent, msg: string) => {
         event.returnValue = `I got ${msg},ok`
-    })
-    ipcMain.on('counterValueCallback', (event: IpcMainEvent, value: string) => {
-        console.log('counterValueCallback', value)
-    })
-    ipcMain.on('Elog', (event: IpcMainEvent, arg: LOG_PARAMS) => {
-        const { type, value } = arg
-        switch (type) {
-            case 'info':
-                Elog.info(value)
-                break
-            case 'error':
-                Elog.error(value)
-                break
-            case 'warn':
-                Elog.warn(value)
-                break
-            case 'debug':
-                Elog.debug(value)
-                break
-            default:
-                console.log('Unknown log type:', type, ...value)
-                break
-        }
-    })
-    ipcMain.on('Log4', (event: IpcMainEvent, arg: LOG_PARAMS) => {
-        const { type, value } = arg
-        switch (type) {
-            case 'info':
-                Log4.info(value)
-                break
-            case 'error':
-                Log4.error(value)
-                break
-            case 'warn':
-                Log4.warn(value)
-                break
-            case 'debug':
-                Log4.debug(value)
-                break
-            default:
-                console.log('Unknown log type:', type, ...value)
-                break
-        }
     })
 }
 

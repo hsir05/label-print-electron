@@ -10,7 +10,8 @@
         "dist": "electron-builder --win --x64",
         "dist:dir": "electron-builder --dir",
         "postinstall": "electron-builder install-app-deps",
-        "clean": "rimraf dist build"
+        "clean": "rimraf dist build",
+        "rebuild": "electron-rebuild"
     },
     "author": "",
     "license": "ISC",
@@ -25,6 +26,7 @@
         "electron": "^33.0.2",
         "electron-builder": "^26.0.12",
         "electron-log": "^5.2.2",
+        "electron-rebuild": "^3.2.9",
         "eslint": "^9.13.0",
         "eslint-plugin-react": "^7.37.2",
         "globals": "^15.11.0",
@@ -34,7 +36,6 @@
         "react-dom": "^18.3.1",
         "react-router-dom": "^6.27.0",
         "rimraf": "^6.0.1",
-        "sqlite3": "^5.1.7",
         "typescript": "^5.6.3",
         "typescript-eslint": "^8.12.2",
         "vite": "^5.4.10",
@@ -44,7 +45,7 @@
         "@ant-design/icons": "^6.0.0",
         "date-fns": "^4.1.0",
         "jsbarcode": "^3.11.6",
-        "log4js": "^6.9.1",
+        "sqlite3": "^5.1.7",
         "xlsx": "^0.18.5"
     },
     "build": {
@@ -63,6 +64,9 @@
             "vite/*",
             "node_modules/**/*",
             "package.json"
+        ],
+        "asarUnpack": [
+            "node_modules/sqlite3/**"
         ],
         "directories": {
             "buildResources": "assets",

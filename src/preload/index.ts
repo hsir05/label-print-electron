@@ -1,5 +1,4 @@
 import { queryParam, insertParam, updateParam, deleteParam } from "@/common/db";
-import { LOG_TYPE } from "@/common/log";
 import { contextBridge, ipcRenderer } from "electron";
 
 type OnUpdateCounterFormMainCallback = (value: number) => void;
@@ -11,16 +10,8 @@ contextBridge.exposeInMainWorld("electronAPI", {
     onCommunicateWithEachOtherReply: (callback: (msg: string) => void) => ipcRenderer.on('communicateWithEachOtherReply', (_event, arg) => callback(arg)),
     communicateWithEachOtherSendSyncMsg: (msg: string) => ipcRenderer.sendSync('communicateWithEachOtherSendSyncMsg', msg),
     onUpdateCounterFormMain: (callback: OnUpdateCounterFormMainCallback) => ipcRenderer.on('update-counter', (_event, value) => callback(value)),
-    updateCounterCallback: (value: number) => ipcRenderer.send('counterValueCallback', value),
-    // mainSendMsgToWork: (msg: string) => ipcRenderer.send('mainSendMsgToWork', msg),
-    listenMsgFromMain: (callback: (msg: string) => void) => ipcRenderer.on('workSendMsgToMain', (_event, msg) => callback(msg)),
 
-    Elog: (type: LOG_TYPE, value: string) => {
-        ipcRenderer.send('Elog', { type, value })
-    },
-    Log4: (type: LOG_TYPE, value: string) => {
-        ipcRenderer.send('Log4', { type, value })
-    },
+   
     sqQuery: (param: queryParam) => {
         return ipcRenderer.invoke('sqQuery', param)
     },
@@ -30,11 +21,11 @@ contextBridge.exposeInMainWorld("electronAPI", {
     sqUpdate: (param: updateParam) => {
         return ipcRenderer.invoke('sqUpdate', param)
     },
-    sqDelete: (param: deleteParam) => {
+    sqDelete: (param: deleteParam) => { 
         return ipcRenderer.invoke('sqDelete', param)
     },
     openFile: () => {
-        return ipcRenderer.invoke('openFile')
+        return ipcRenderer.invoke('openFile') 
     },
     printDomElement: () => {
         return ipcRenderer.invoke('print-dom-element')

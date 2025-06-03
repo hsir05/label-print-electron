@@ -10,10 +10,18 @@ export default defineConfig({
         // minify: 'terser', // 使用 terser 进行代码压缩
         sourcemap: true, // 生产环境关闭 sourcemap
         chunkSizeWarningLimit: 1000, // 调整 chunk 大小警告限制
+        // emptyOutDir: false,
+        extraFiles: [
+            "node_modules/sqlite3/**/*"
+        ],
         rollupOptions: {
+            // external: [
+            //     "electron",
+            //     "sqlite3",
+            // ],
             output: {
-                // 自定义输出配置
-            }
-        }
+                // entryFileNames: "[name].cjs",
+            },
+        },
     }
 });
