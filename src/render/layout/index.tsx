@@ -3,7 +3,8 @@ import {
   HomeOutlined,
   WindowsOutlined,
   DatabaseOutlined,
-} from '@ant-design/icons';
+  ExceptionOutlined,
+} from "@ant-design/icons";
 import type { MenuProps } from 'antd';
 import { Layout, Menu, theme } from 'antd';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -30,6 +31,7 @@ const items: MenuItem[] = [
   getItem("首页", "/main", <HomeOutlined />),
   getItem("历史记录", "/history", <WindowsOutlined />),
   getItem("数据维护", "/db", <DatabaseOutlined />),
+  getItem("对应表", "/record", <ExceptionOutlined />),
 ];
 
 const App: React.FC = () => {
