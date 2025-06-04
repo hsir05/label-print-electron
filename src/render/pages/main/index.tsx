@@ -44,6 +44,7 @@ const Main = () => {
     const [weekDisabled, setWeekDisabled] = React.useState<boolean>(false);
     const [snCode, setSnCode] = React.useState<string>("");
     const [snCodeList, setSnCodeList] = React.useState<string[]>([]);
+    const [maxSerial, setMaxSerial] = React.useState<string>("");
     
     type FieldType = {
         pcba?: string;
@@ -70,7 +71,6 @@ const Main = () => {
         queryHandle("country");
         queryHandle("year");
         queryHandle("week");
-
         
         form.setFieldsValue({num:20});
 
@@ -101,11 +101,20 @@ const Main = () => {
 
     const onFinish: FormProps<FieldType>["onFinish"] = async (values: any) => {
         console.log("Success:", values);
+
+        setSnCodeList([]);
+
         const snCode = `${values.pcba}0${values.category}${values.specifications}${values.series}${values.productionId}${values.year}${values.week}${values.country}`;
         let res = await window.electronAPI.sqQuery({
           sql: `SELECT MAX(serial_number) AS max_serial FROM history;`,
         });
+
+        setSnCode(snCode);
+
         const maxSerial = res[0].max_serial;
+    
+        setMaxSerial(maxSerial);
+
         let snList: string[] = [];
         for(let i = 1; i <= values.num; i++){
             let len = `${i + maxSerial}`.length
@@ -127,17 +136,9 @@ const Main = () => {
                 break;
             }
         }
-        console.log(snList);
         setSnCodeList(snList);
 
-        const data = {
-          snCode: snCode,
-          create_time: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
-          account: "admin",
-          serial_number: maxSerial + values.num,
-          num: values.num,
-        };
-        sqInsertHandle(data);
+      
     };
     const onReset = () => {
         form.resetFields();
@@ -153,11 +154,6 @@ const Main = () => {
     ) => {
         console.log("Failed:", errorInfo);
     };
-
-    const onGenderChange = (value: string) => {
-        console.log(value);
-    };
-
     const createBarCode = (snCode: string = "601211KBD0000018") => {
         JsBarcode("#barcode", snCode, {
             format: "CODE128",
@@ -231,23 +227,25 @@ const Main = () => {
     };
 
     const exportToFile = () => {
-        //含SN列表生成时间，SN码范围，操作账号信息
-        const sampleData = [
-            ["序号", "SN码"],
-            ["1", "601211KBD0000018"],
-            ["2", "601211KBD0000019"],
-            ["3", "601211KBD0000020"],
-        ];
+      console.log(form.getFieldsValue());
+      const {num} = form.getFieldsValue(["num",]);
+      const data = {
+        snCode: snCode,
+        create_time: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
+        account: "admin",
+        serial_number: maxSerial + num,
+        num: num,
+      };
+      sqInsertHandle(data);
 
-        // const SNDList = [
-        //   ["序号", "SN码", "生成时间",""],
-        //   ["1", "601211KBD0000018"],
-        //   ["2", "601211KBD0000019"],
-        //   ["3", "601211KBD0000020"],
-        // ];
-
-        // 调用导出函数
-        exportToExcel(sampleData, `SN${snCode}`);
+      //含SN列表生成时间，SN码范围，操作账号信息
+      // const sampleData = [
+      //     ["序号", "SN码"],
+      //     ["1", "601211KBD0000018"],
+      //     ["2", "601211KBD0000019"],
+      //     ["3", "601211KBD0000020"],
+      // ];
+      // exportToExcel(sampleData, `SN${snCode}`);
     };
 
     const btn = (
@@ -258,7 +256,7 @@ const Main = () => {
           className="ml-15"
           disabled={snCodeList.length > 0 ? false : true}
         >
-          输出列表
+          确认
         </Button>
         <Button
           type="primary"
@@ -285,7 +283,7 @@ const Main = () => {
     const formBtn = (
       <>
         <Button type="primary" onClick={formSubmit}>
-          确认
+          预览
         </Button>
         <Button type="primary" onClick={onReset} style={{ marginLeft: 8 }}>
           重置
@@ -347,7 +345,6 @@ const Main = () => {
                 >
                   <Select
                     placeholder="请选择产品规格"
-                    onChange={onGenderChange}
                     allowClear
                   >
                     {specificationsData.map((item, index) => {
@@ -368,7 +365,6 @@ const Main = () => {
                 >
                   <Select
                     placeholder="请选择产品代系"
-                    onChange={onGenderChange}
                     allowClear
                   >
                     {seriesData.map((item, index) => {
@@ -389,7 +385,6 @@ const Main = () => {
                 >
                   <Select
                     placeholder="请选择产品序列号"
-                    onChange={onGenderChange}
                     allowClear
                   >
                     {productionIdData.map((item, index) => {
@@ -410,7 +405,6 @@ const Main = () => {
                 >
                   <Select
                     placeholder="请选择国别"
-                    onChange={onGenderChange}
                     allowClear
                   >
                     {countryData.map((item, index) => {
@@ -503,7 +497,6 @@ const Main = () => {
         </Card>
 
         <Card title="SN码预览" className="mt-15" extra={btn}>
-          <div className="sn-code">{snCode}</div>
           <ul className="sncode-list">
             {snCodeList.map((item, index) => {
               return (
