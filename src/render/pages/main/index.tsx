@@ -137,8 +137,6 @@ const Main = () => {
             }
         }
         setSnCodeList(snList);
-
-      
     };
     const onReset = () => {
         form.resetFields();
