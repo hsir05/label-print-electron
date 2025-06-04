@@ -149,7 +149,8 @@ class Database {
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         snCode varchar,
                         create_time varchar,
-                        account varchar
+                        account varchar,
+                        serial_number integer
                         )
                     `,
                 });
@@ -166,12 +167,12 @@ class Database {
                 `,
                 });
             })
-            .then(() => {
-                return this.insert({table: 'users', data: {account: 'admin', password: 'admin', status: 1}});
-            })
-            .then(() => {
-                return this.insert({ table: 'users', data: { account: 'print', password: 'print', status: 1 } });
-            })
+            // .then(() => {
+            //     return this.insert({table: 'users', data: {account: 'admin', password: 'admin', status: 1}});
+            // })
+            // .then(() => {
+            //     return this.insert({ table: 'users', data: { account: 'print', password: 'print', status: 1 } });
+            // })
             .then(() => {
                 console.log("Database schema initialized.");
             }).catch((err) => {
