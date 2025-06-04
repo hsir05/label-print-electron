@@ -9,12 +9,12 @@ import {
   Col,
   Row,
   Select,
-  Card,
+  Card,Tag,
   InputNumber,
 } from "antd";
 import { exportToExcel } from "../../../common/db";
 import JsBarcode from "jsbarcode";
-import { getISOWeek } from "date-fns";
+import { getISOWeek, format } from "date-fns";
 import "./index.less";
 
 const { Option } = Select;
@@ -43,6 +43,7 @@ const Main = () => {
     const [yearDisabled, setYearDisabled] = React.useState<boolean>(false);
     const [weekDisabled, setWeekDisabled] = React.useState<boolean>(false);
     const [snCode, setSnCode] = React.useState<string>("");
+    const [snCodeList, setSnCodeList] = React.useState<string[]>([]);
     
     type FieldType = {
         pcba?: string;
@@ -70,7 +71,9 @@ const Main = () => {
         queryHandle("year");
         queryHandle("week");
 
+        
         form.setFieldsValue({num:20});
+
     }, []);
 
     const handleYear = (data: DataType[]) => {
@@ -96,11 +99,45 @@ const Main = () => {
         }
     };
 
-    const onFinish: FormProps<FieldType>["onFinish"] = (values: any) => {
+    const onFinish: FormProps<FieldType>["onFinish"] = async (values: any) => {
         console.log("Success:", values);
-        const snCode = `${values.pcba}${values.category}${values.specifications}${values.series}${values.productionId}${values.year || ""}${values.week || ""}${values.country}`;
-        console.log("SN码:", snCode);
-        setSnCode(snCode);
+        const snCode = `${values.pcba}0${values.category}${values.specifications}${values.series}${values.productionId}${values.year}${values.week}${values.country}`;
+        let res = await window.electronAPI.sqQuery({
+          sql: `SELECT MAX(serial_number) AS max_serial FROM history;`,
+        });
+        const maxSerial = res[0].max_serial;
+        let snList: string[] = [];
+        for(let i = 1; i <= values.num; i++){
+            let len = `${i + maxSerial}`.length
+            switch (len) {
+              case 1:
+                snList.push(`${snCode}0000${i + maxSerial}`);
+                break;
+              case 2:
+                snList.push(`${snCode}000${i + maxSerial}`);
+                break;
+              case 3:
+                snList.push(`${snCode}00${i + maxSerial}`);
+                break;
+              case 4:
+                snList.push(`${snCode}0${i + maxSerial}`);
+                break;
+              case 5:
+                snList.push(`${snCode}${i + maxSerial}`);
+                break;
+            }
+        }
+        console.log(snList);
+        setSnCodeList(snList);
+
+        const data = {
+          snCode: snCode,
+          create_time: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
+          account: "admin",
+          serial_number: maxSerial + values.num,
+          num: values.num,
+        };
+        sqInsertHandle(data);
     };
     const onReset = () => {
         form.resetFields();
@@ -115,9 +152,6 @@ const Main = () => {
         errorInfo: any,
     ) => {
         console.log("Failed:", errorInfo);
-        setSnCode("601211KBD0000018");
-
-        //  6 0 1 2 1 1 K BD 00   00018
     };
 
     const onGenderChange = (value: string) => {
@@ -149,6 +183,9 @@ const Main = () => {
         } catch (error) {
             console.error("打印出错:", error);
         }
+    };
+    const sqInsertHandle = async (data:any) => {
+      await window.electronAPI.sqInsert({ table: "history", data: data });
     };
     const queryHandle = async (tableName: string) => {
         let res = await window.electronAPI.sqQuery({
@@ -214,40 +251,39 @@ const Main = () => {
     };
 
     const btn = (
-        <div className="button-group">
-            <Button
-                type="primary"
-                onClick={exportToFile}
-                className="ml-15"
-                disabled={!snCode}
-            >
-                输出列表
-            </Button>
-            <Button
-                type="primary"
-                disabled={!snCode}
-                className="ml-15"
-                onClick={() => {
-                    createBarCode("601211KBD0000018");
-                }}
-            >
-                生成条码
-            </Button>
-            {/* <Button type="primary" onClick={createBarCode}>选择打印机 </Button> */}
-            <Button
-                type="primary"
-                onClick={printLabel}
-                className="ml-15"
-                disabled={!snCode}
-            >
-                打印
-            </Button>
-        </div>
+      <div className="button-group">
+        <Button
+          type="primary"
+          onClick={exportToFile}
+          className="ml-15"
+          disabled={snCodeList.length > 0 ? false : true}
+        >
+          输出列表
+        </Button>
+        <Button
+          type="primary"
+          disabled={snCodeList.length > 0 ? false : true}
+          className="ml-15"
+          onClick={() => {
+            createBarCode("601211KBD0000018");
+          }}
+        >
+          生成条码
+        </Button>
+        {/* <Button type="primary" onClick={createBarCode}>选择打印机 </Button> */}
+        <Button
+          type="primary"
+          onClick={printLabel}
+          className="ml-15"
+          disabled={snCodeList.length > 0 ? false : true}
+        >
+          打印
+        </Button>
+      </div>
     );
 
     const formBtn = (
       <>
-        {" "}
         <Button type="primary" onClick={formSubmit}>
           确认
         </Button>
@@ -468,7 +504,18 @@ const Main = () => {
 
         <Card title="SN码预览" className="mt-15" extra={btn}>
           <div className="sn-code">{snCode}</div>
-
+          <ul className="sncode-list">
+            {snCodeList.map((item, index) => {
+              return (
+                <li
+                  key={index}
+                  style={{ marginBottom: "10px", marginRight: "10px" }}
+                >
+                  {item}
+                </li>
+              );
+            })}
+          </ul>
           <div id="label-designer">
             <canvas id="barcode" width="200" height="100"></canvas>
           </div>

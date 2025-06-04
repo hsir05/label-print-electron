@@ -150,7 +150,8 @@ class Database {
                         snCode varchar,
                         create_time varchar,
                         account varchar,
-                        serial_number integer
+                        serial_number integer,
+                        num integer
                         )
                     `,
                 });
