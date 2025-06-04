@@ -108,20 +108,10 @@ const DBPage = () => {
       },
     ];
     const sqInsertHandle = async (table: string, data: any) => {
-    //   sqInsert({ table: table, data: data }).then(() => {
-    //     queryHandle(activeKey);
-    //   });
       await window.electronAPI.sqInsert({ table: table, data: data });
     };
 
     const queryHandle =async (tableName: string) => {
-        // sqQuery({ 
-        //     sql: `SELECT * FROM ${tableName}`,
-        //     params: []
-        // }).then((res: any) => {
-        //     setData(res)
-        // })
-
         let res = await window.electronAPI.sqQuery({
           sql: `SELECT * FROM ${tableName}`,
           params: [],
