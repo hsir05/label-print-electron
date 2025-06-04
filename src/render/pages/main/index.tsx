@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import type { FormProps } from "antd";
 import {
-    Button,
-    Form,
-    Input,
-    Space,
-    Checkbox,
-    Col,
-    Row,
-    Select,
-    Card,
+  Button,
+  Form,
+  Input,
+  Space,
+  Checkbox,
+  Col,
+  Row,
+  Select,
+  Card,
+  InputNumber,
 } from "antd";
 import { exportToExcel } from "../../../common/db";
 import JsBarcode from "jsbarcode";
@@ -42,7 +43,7 @@ const Main = () => {
     const [yearDisabled, setYearDisabled] = React.useState<boolean>(false);
     const [weekDisabled, setWeekDisabled] = React.useState<boolean>(false);
     const [snCode, setSnCode] = React.useState<string>("");
-
+    
     type FieldType = {
         pcba?: string;
         category?: string;
@@ -56,6 +57,7 @@ const Main = () => {
         week?: string;
         country?: string;
         serialNumber?: string;
+        num:  number;
     };
 
     useEffect(() => {
@@ -67,6 +69,8 @@ const Main = () => {
         queryHandle("country");
         queryHandle("year");
         queryHandle("week");
+
+        form.setFieldsValue({num:20});
     }, []);
 
     const handleYear = (data: DataType[]) => {
@@ -80,7 +84,6 @@ const Main = () => {
             });
         }
     };
-
     const handleWeek = (data: DataType[]) => {
         const week = getISOWeek(new Date());
         const currentWeek = data.find(
@@ -103,7 +106,11 @@ const Main = () => {
         form.resetFields();
         handleYear(yearData);
         handleWeek(weekData);
+        form.setFieldsValue({ num: 20 });
     };
+    const formSubmit=()=>{
+        form.submit();
+    }   
     const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
         errorInfo: any,
     ) => {
@@ -237,212 +244,236 @@ const Main = () => {
             </Button>
         </div>
     );
+
+    const formBtn = (
+      <>
+        {" "}
+        <Button type="primary" onClick={formSubmit}>
+          确认
+        </Button>
+        <Button type="primary" onClick={onReset} style={{ marginLeft: 8 }}>
+          重置
+        </Button>
+      </>
+    );
     return (
-        <div className="page">
-            <Card title="SN码生成">
-                <Form
-                    name="basic"
-                    form={form}
-                    labelCol={{ span: 8 }}
-                    wrapperCol={{ span: 16 }}
-                    initialValues={{ remember: true }}
-                    onFinish={onFinish}
-                    onFinishFailed={onFinishFailed}
+      <div className="page">
+        <Card title="SN码生成" extra={formBtn}>
+          <Form
+            name="basic"
+            form={form}
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 16 }}
+            initialValues={{ remember: true }}
+            onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
+          >
+            <Row gutter={24}>
+              <Col span={8}>
+                <Form.Item<FieldType>
+                  label="РСВА厂"
+                  name="pcba"
+                  rules={[{ required: true, message: "请选择РСВА厂" }]}
                 >
-                    <Row gutter={24}>
-                        <Col span={8}>
-                            <Form.Item<FieldType>
-                                label="РСВА厂"
-                                name="pcba"
-                                rules={[{ required: true, message: "请选择РСВА厂" }]}
-                            >
-                                <Select placeholder="请选择РСВА厂" allowClear>
-                                    {PCBAData.map((item, index) => {
-                                        return (
-                                            <Option value={item.value} key={index}>
-                                                {item.label}
-                                            </Option>
-                                        );
-                                    })}
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col span={8}>
-                            <Form.Item<FieldType>
-                                label="产品类别"
-                                name="category"
-                                rules={[{ required: true, message: "请选择产品类别" }]}
-                            >
-                                <Select placeholder="请选择产品类别" allowClear>
-                                    {categoryData.map((item, index) => {
-                                        return (
-                                            <Option value={item.value} key={index}>
-                                                {item.label}
-                                            </Option>
-                                        );
-                                    })}
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col span={8}>
-                            <Form.Item<FieldType>
-                                label="产品规格"
-                                name="specifications"
-                                rules={[{ required: true, message: "请选择产品规格" }]}
-                            >
-                                <Select
-                                    placeholder="请选择产品规格"
-                                    onChange={onGenderChange}
-                                    allowClear
-                                >
-                                    {specificationsData.map((item, index) => {
-                                        return (
-                                            <Option value={item.value} key={index}>
-                                                {item.label}
-                                            </Option>
-                                        );
-                                    })}
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col span={8}>
-                            <Form.Item<FieldType>
-                                label="产品代系"
-                                name="series"
-                                rules={[{ required: true, message: "请选择产品代系" }]}
-                            >
-                                <Select
-                                    placeholder="请选择产品代系"
-                                    onChange={onGenderChange}
-                                    allowClear
-                                >
-                                    {seriesData.map((item, index) => {
-                                        return (
-                                            <Option value={item.value} key={index}>
-                                                {item.label}
-                                            </Option>
-                                        );
-                                    })}
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col span={8}>
-                            <Form.Item<FieldType>
-                                label="产品序列号"
-                                name="productionId"
-                                rules={[{ required: true, message: "请选择产品序列号" }]}
-                            >
-                                <Select
-                                    placeholder="请选择产品序列号"
-                                    onChange={onGenderChange}
-                                    allowClear
-                                >
-                                    {productionIdData.map((item, index) => {
-                                        return (
-                                            <Option value={item.value} key={index}>
-                                                {item.label}
-                                            </Option>
-                                        );
-                                    })}
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col span={8}>
-                            <Form.Item label="年">
-                                <Space.Compact style={{ width: "100%" }}>
-                                    <Form.Item<FieldType> name="checkboxYear" noStyle>
-                                        <Checkbox
-                                            onChange={onYearCheck}
-                                            style={{ width: "15%" }}
-                                        ></Checkbox>
-                                    </Form.Item>
-                                    <Form.Item<FieldType>
-                                        name={["year"]}
-                                        className="ml-15"
-                                        noStyle
-                                        rules={[{ required: true, message: "请输入年" }]}
-                                    >
-                                        <Input
-                                            style={{ width: "85%" }}
-                                            disabled={!yearDisabled}
-                                            placeholder="请输入年"
-                                        />
-                                    </Form.Item>
-                                </Space.Compact>
-                            </Form.Item>
-                        </Col>
-                        <Col span={8}>
-                            <Form.Item label="周">
-                                <Space.Compact style={{ width: "100%" }}>
-                                    <Form.Item name="checkboxWeek" noStyle>
-                                        <Checkbox
-                                            onChange={onWeekCheck}
-                                            style={{ width: "15%" }}
-                                        ></Checkbox>
-                                    </Form.Item>
-                                    <Form.Item<FieldType>
-                                        name={["week"]}
-                                        className="ml-15"
-                                        noStyle
-                                        rules={[{ required: true, message: "请选择周" }]}
-                                    >
-                                        <Input
-                                            style={{ width: "85%" }}
-                                            disabled={!weekDisabled}
-                                            placeholder="请输入周"
-                                        />
-                                    </Form.Item>
-                                </Space.Compact>
-                            </Form.Item>
-                        </Col>
+                  <Select placeholder="请选择РСВА厂" allowClear>
+                    {PCBAData.map((item, index) => {
+                      return (
+                        <Option value={item.value} key={index}>
+                          {item.label}
+                        </Option>
+                      );
+                    })}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item<FieldType>
+                  label="产品类别"
+                  name="category"
+                  rules={[{ required: true, message: "请选择产品类别" }]}
+                >
+                  <Select placeholder="请选择产品类别" allowClear>
+                    {categoryData.map((item, index) => {
+                      return (
+                        <Option value={item.value} key={index}>
+                          {item.label}
+                        </Option>
+                      );
+                    })}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item<FieldType>
+                  label="产品规格"
+                  name="specifications"
+                  rules={[{ required: true, message: "请选择产品规格" }]}
+                >
+                  <Select
+                    placeholder="请选择产品规格"
+                    onChange={onGenderChange}
+                    allowClear
+                  >
+                    {specificationsData.map((item, index) => {
+                      return (
+                        <Option value={item.value} key={index}>
+                          {item.label}
+                        </Option>
+                      );
+                    })}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item<FieldType>
+                  label="产品代系"
+                  name="series"
+                  rules={[{ required: true, message: "请选择产品代系" }]}
+                >
+                  <Select
+                    placeholder="请选择产品代系"
+                    onChange={onGenderChange}
+                    allowClear
+                  >
+                    {seriesData.map((item, index) => {
+                      return (
+                        <Option value={item.value} key={index}>
+                          {item.label}
+                        </Option>
+                      );
+                    })}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item<FieldType>
+                  label="产品序列号"
+                  name="productionId"
+                  rules={[{ required: true, message: "请选择产品序列号" }]}
+                >
+                  <Select
+                    placeholder="请选择产品序列号"
+                    onChange={onGenderChange}
+                    allowClear
+                  >
+                    {productionIdData.map((item, index) => {
+                      return (
+                        <Option value={item.value} key={index}>
+                          {item.label}
+                        </Option>
+                      );
+                    })}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item<FieldType>
+                  label="国别"
+                  name="country"
+                  rules={[{ required: true, message: "请选择国别" }]}
+                >
+                  <Select
+                    placeholder="请选择国别"
+                    onChange={onGenderChange}
+                    allowClear
+                  >
+                    {countryData.map((item, index) => {
+                      return (
+                        <Option value={item.value} key={index}>
+                          {item.label}
+                        </Option>
+                      );
+                    })}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="年">
+                  <Space.Compact style={{ width: "100%" }}>
+                    <Form.Item<FieldType> name="checkboxYear" noStyle>
+                      <Checkbox
+                        onChange={onYearCheck}
+                        style={{ width: "15%" }}
+                      ></Checkbox>
+                    </Form.Item>
+                    <Form.Item<FieldType>
+                      name={["year"]}
+                      className="ml-15"
+                      noStyle
+                      rules={[{ required: true, message: "请输入年" }]}
+                    >
+                      <Input
+                        style={{ width: "85%" }}
+                        disabled={!yearDisabled}
+                        placeholder="请输入年"
+                      />
+                    </Form.Item>
+                  </Space.Compact>
+                </Form.Item>
+              </Col>
+              <Col span={8}>
+                <Form.Item label="周">
+                  <Space.Compact style={{ width: "100%" }}>
+                    <Form.Item name="checkboxWeek" noStyle>
+                      <Checkbox
+                        onChange={onWeekCheck}
+                        style={{ width: "15%" }}
+                      ></Checkbox>
+                    </Form.Item>
+                    <Form.Item<FieldType>
+                      name={["week"]}
+                      className="ml-15"
+                      noStyle
+                      rules={[{ required: true, message: "请选择周" }]}
+                    >
+                      <Input
+                        style={{ width: "85%" }}
+                        disabled={!weekDisabled}
+                        placeholder="请输入周"
+                      />
+                    </Form.Item>
+                  </Space.Compact>
+                </Form.Item>
+              </Col>
 
-                        <Col span={8}>
-                            <Form.Item<FieldType>
-                                label="国别"
-                                name="country"
-                                rules={[{ required: true, message: "请选择国别" }]}
-                            >
-                                <Select
-                                    placeholder="请选择国别"
-                                    onChange={onGenderChange}
-                                    allowClear
-                                >
-                                    {countryData.map((item, index) => {
-                                        return (
-                                            <Option value={item.value} key={index}>
-                                                {item.label}
-                                            </Option>
-                                        );
-                                    })}
-                                </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col span={8}>
-                            <Form.Item label={null}>
-                                <Button type="primary" htmlType="submit">
-                                    确认
-                                </Button>
-                                <Button
-                                    type="primary"
-                                    onClick={onReset}
-                                    style={{ marginLeft: 8 }}
-                                >
-                                    重置
-                                </Button>
-                            </Form.Item>
-                        </Col>
-                    </Row>
-                </Form>
-            </Card>
+              <Col span={8}>
+                <Form.Item<FieldType>
+                  label="生成数量"
+                  name="num"
+                  rules={[{ required: true, message: "请输入生成数量" }]}
+                >
+                  <InputNumber
+                    placeholder="请输入生成数量"
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+              </Col>
+              {/* <Col span={8}>
+                <Form.Item label={null}>
+                  <Button type="primary" htmlType="submit">
+                    确认
+                  </Button>
+                  <Button
+                    type="primary"
+                    onClick={onReset}
+                    style={{ marginLeft: 8 }}
+                  >
+                    重置
+                  </Button>
+                </Form.Item>
+              </Col> */}
+            </Row>
+          </Form>
+        </Card>
 
-            <Card title="SN码预览" className="mt-15" extra={btn}>
-                <div className="sn-code">{snCode}</div>
+        <Card title="SN码预览" className="mt-15" extra={btn}>
+          <div className="sn-code">{snCode}</div>
 
-                <div id="label-designer">
-                    <canvas id="barcode" width="200" height="100"></canvas>
-                </div>
-            </Card>
-        </div>
+          <div id="label-designer">
+            <canvas id="barcode" width="200" height="100"></canvas>
+          </div>
+        </Card>
+      </div>
     );
 };
 

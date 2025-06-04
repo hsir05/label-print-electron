@@ -142,19 +142,36 @@ class Database {
             )
           `,
                 });
+            }).then(() => {
+                return this.query({
+                    sql: `
+                        CREATE TABLE IF NOT EXISTS history (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        snCode varchar,
+                        create_time varchar,
+                        account varchar
+                        )
+                    `,
+                });
             })
-        //     .then(() => {
-        //         return this.query({
-        //             sql: `
-        //     CREATE TABLE IF NOT EXISTS history (
-        //       id INTEGER PRIMARY KEY AUTOINCREMENT,
-        //       snCode varchar,
-        //       create_time varchar,
-        //       account varchar,
-        //     )
-        //   `,
-        //         });
-        //     })
+            .then(() => {
+                return this.query({
+                    sql: `
+                    CREATE TABLE IF NOT EXISTS users (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    account varchar,
+                    password varchar,
+                    status tinyint
+                    )
+                `,
+                });
+            })
+            .then(() => {
+                return this.insert({table: 'users', data: {account: 'admin', password: 'admin', status: 1}});
+            })
+            .then(() => {
+                return this.insert({ table: 'users', data: { account: 'print', password: 'print', status: 1 } });
+            })
             .then(() => {
                 console.log("Database schema initialized.");
             }).catch((err) => {
