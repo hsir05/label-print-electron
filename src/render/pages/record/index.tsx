@@ -97,7 +97,6 @@ const Record = () => {
       ];
       exportToExcel(sampleData, `SN`);
     }
-
     const onOk = (value: DatePickerProps["value"] | RangePickerProps["value"],) => {
         console.log("onOk: ", value);
     };
@@ -124,11 +123,19 @@ const Record = () => {
           fileName: fileName,
         });
     }
+    const handleOk=()=>{
+        for(let i=0;i<excelData.length;i++){
+            console.log(excelData[i]);
+            let item = excelData[i];
+            item[1]=item[1].toLocaleUpperCase()
+        }
+        exportToExcel(excelData, info.fileName, "Sheet1")
+    }
 
-    const cardBtn = (
+    const okBtn = (
         <div>
-            <Button type="primary" onClick={handleOpenFile}>
-                导入
+            <Button type="primary" onClick={handleOk}>
+                确定
             </Button>
         </div>
     )
@@ -152,7 +159,7 @@ const Record = () => {
     ];
     return (
       <div className="">
-        <Card title="生成" extra={cardBtn}>
+        <Card title="生成">
           <Form
             name="basic"
             form={form}
@@ -178,7 +185,7 @@ const Record = () => {
                   name="createTime"
                   rules={[{ required: true, message: "请选择下单时间" }]}
                 >
-                  <DatePicker style={{ width: "100%" }}/>
+                  <DatePicker style={{ width: "100%" }} />
                 </Form.Item>
               </Col>
               <Col span={2}>
@@ -251,9 +258,8 @@ const Record = () => {
           </Form>
         </Card>
 
-        <Card title="预览" extra={cardBtn}>
+        <Card title="预览" extra={okBtn}>
           <Descriptions
-            title="Responsive Descriptions"
             bordered
             column={{ xs: 1, sm: 2, md: 3, lg: 3, xl: 4, xxl: 4 }}
             items={items}
