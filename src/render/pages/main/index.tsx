@@ -226,7 +226,7 @@ const Main = () => {
 
     const exportToFile = () => {
       console.log(form.getFieldsValue());
-      const {num} = form.getFieldsValue(["num",]);
+      const {num} = form.getFieldsValue(["num"]);
       const data = {
         snCode: snCode,
         create_time: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
@@ -341,10 +341,7 @@ const Main = () => {
                   name="specifications"
                   rules={[{ required: true, message: "请选择产品规格" }]}
                 >
-                  <Select
-                    placeholder="请选择产品规格"
-                    allowClear
-                  >
+                  <Select placeholder="请选择产品规格" allowClear>
                     {specificationsData.map((item, index) => {
                       return (
                         <Option value={item.value} key={index}>
@@ -361,10 +358,7 @@ const Main = () => {
                   name="series"
                   rules={[{ required: true, message: "请选择产品代系" }]}
                 >
-                  <Select
-                    placeholder="请选择产品代系"
-                    allowClear
-                  >
+                  <Select placeholder="请选择产品代系" allowClear>
                     {seriesData.map((item, index) => {
                       return (
                         <Option value={item.value} key={index}>
@@ -381,10 +375,7 @@ const Main = () => {
                   name="productionId"
                   rules={[{ required: true, message: "请选择产品序列号" }]}
                 >
-                  <Select
-                    placeholder="请选择产品序列号"
-                    allowClear
-                  >
+                  <Select placeholder="请选择产品序列号" allowClear>
                     {productionIdData.map((item, index) => {
                       return (
                         <Option value={item.value} key={index}>
@@ -401,10 +392,7 @@ const Main = () => {
                   name="country"
                   rules={[{ required: true, message: "请选择国别" }]}
                 >
-                  <Select
-                    placeholder="请选择国别"
-                    allowClear
-                  >
+                  <Select placeholder="请选择国别" allowClear>
                     {countryData.map((item, index) => {
                       return (
                         <Option value={item.value} key={index}>
@@ -418,7 +406,11 @@ const Main = () => {
               <Col span={8}>
                 <Form.Item label="年">
                   <Space.Compact style={{ width: "100%" }}>
-                    <Form.Item<FieldType> name="checkboxYear" noStyle>
+                    <Form.Item<FieldType>
+                      name="checkboxYear"
+                      noStyle
+                      valuePropName="checked"
+                    >
                       <Checkbox
                         onChange={onYearCheck}
                         style={{ width: "15%" }}
@@ -442,7 +434,11 @@ const Main = () => {
               <Col span={8}>
                 <Form.Item label="周">
                   <Space.Compact style={{ width: "100%" }}>
-                    <Form.Item name="checkboxWeek" noStyle>
+                    <Form.Item
+                      name="checkboxWeek"
+                      noStyle
+                      valuePropName="checked"
+                    >
                       <Checkbox
                         onChange={onWeekCheck}
                         style={{ width: "15%" }}
