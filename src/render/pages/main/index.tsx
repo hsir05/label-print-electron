@@ -15,6 +15,7 @@ import {
 import { exportToExcel } from "../../../common/db";
 import JsBarcode from "jsbarcode";
 import { getISOWeek, format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 import "./index.less";
 
 const { Option } = Select;
@@ -27,6 +28,7 @@ interface DataType {
 
 const Main = () => {
     const [form] = Form.useForm();
+    const navigate = useNavigate();
 
     const [PCBAData, setPCBAData] = React.useState<DataType[]>([]);
     const [categoryData, setCategoryData] = React.useState<DataType[]>([]);
@@ -290,7 +292,7 @@ const Main = () => {
     );
 
     const handleToLogin=()=>{
-      
+        navigate("/login"); 
     }
     return (
       <div className="page">
