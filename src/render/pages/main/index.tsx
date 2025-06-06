@@ -288,8 +288,18 @@ const Main = () => {
         </Button>
       </>
     );
+
+    const handleToLogin=()=>{
+      
+    }
     return (
       <div className="page">
+        <Button
+          type="primary"
+          onClick={handleToLogin}
+        >
+          login
+        </Button>
         <Card title="SN码生成" extra={formBtn}>
           <Form
             name="basic"

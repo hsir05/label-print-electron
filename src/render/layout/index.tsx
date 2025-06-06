@@ -6,7 +6,7 @@ import {
   ExceptionOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from 'antd';
-import { Layout, Menu, theme, ConfigProvider } from "antd";
+import { Layout, Menu, theme } from "antd";
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 const { Content, Sider } = Layout;
