@@ -268,10 +268,6 @@ export const sqQuery = async (param: queryParam) => {
     const db = await getDatabase();
     return db.query(param);
 };
-export const dbQuery = async (param: queryParam) => {
-    const db = await getDatabase();
-    return db.query(param);
-};
 export const sqInsert = async (param: insertParam) => {
     const db = await getDatabase();
     return db.insert(param);

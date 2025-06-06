@@ -1,42 +1,32 @@
-import { Button, Checkbox, Form, Input } from "antd";
+import { Button, Checkbox, Form, Input, message } from "antd";
 import React, { useEffect } from "react";
 import type { FormProps } from "antd";
+import { useNavigate } from "react-router-dom";
 
 type FieldType = {
-  username?: string;
+  account?: string;
   password?: string;
 };
 const Login = () => {
-  
-  
-    useEffect(() => {
-    
-  }, []);
-
+     const navigate = useNavigate();
   const onFinish: FormProps<FieldType>["onFinish"] = async(values) => {
-    console.log("Success:", values);
-
-    let res = await window.electronAPI.sqQuery({
-      sql: `SELECT * FROM users WHERE username = ${values.username} AND password = ${values.password};`,
-      params: [],
-    });
-    console.log(res);
-    
+    try {
+        let res = await window.electronAPI.sqQuery({
+          sql: `SELECT * FROM users WHERE account = '${values.account}' AND password = '${values.password}'`,
+          params: [],
+        });
+        console.log(res);
+        if (res.length > 0) {
+            message.success("登录成功!");
+          navigate("/main");
+        } else {
+            message.error("账号或密码错误");
+        }
+    } catch (err) {
+        console.log(err);
+    }
   };
 
-  const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
-    errorInfo,
-  ) => {
-    console.log("Failed:", errorInfo);
-  };
-
-  const queryHandle = async () => {
-    let res = await window.electronAPI.sqQuery({
-      sql: `SELECT * FROM history`,
-      params: [],
-    });
-    
-  };
   const styleObj = {
     width: 500,
     position:  "absolute",
@@ -60,7 +50,6 @@ const Login = () => {
         style={styleObj} size="large"
         initialValues={{ remember: true }}
         onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
         autoComplete="off"
       >
         <h3 style={{ width: "100%", textAlign: "center" }}>
@@ -68,7 +57,7 @@ const Login = () => {
         </h3>
         <Form.Item<FieldType>
           label="账号"
-          name="username"
+          name="account"
           rules={[{ required: true, message: "请输入用户名!" }]}
         >
           <Input placeholder="请输入用户名" />
