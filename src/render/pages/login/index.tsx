@@ -5,7 +5,6 @@ import type { FormProps } from "antd";
 type FieldType = {
   username?: string;
   password?: string;
-  remember?: string;
 };
 const Login = () => {
   
@@ -14,8 +13,15 @@ const Login = () => {
     
   }, []);
 
-  const onFinish: FormProps<FieldType>["onFinish"] = (values) => {
+  const onFinish: FormProps<FieldType>["onFinish"] = async(values) => {
     console.log("Success:", values);
+
+    let res = await window.electronAPI.sqQuery({
+      sql: `SELECT * FROM users WHERE username = ${values.username} AND password = ${values.password};`,
+      params: [],
+    });
+    console.log(res);
+    
   };
 
   const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
@@ -32,11 +38,14 @@ const Login = () => {
     
   };
   const styleObj = {
-    width: 400,
+    width: 500,
     position:  "absolute",
-    top: "50%",
+    top: "40%",
     left: "50%",
     transform: "translate(-50%, -50%)",
+    border:'1px solid #ccc',
+    padding:'25px 45px 25px 25px',
+    borderRadius: '8px',
   };
 
   return (
@@ -46,9 +55,9 @@ const Login = () => {
     >
       <Form
         name="basic" 
-        labelCol={{ span: 4 }}
-        wrapperCol={{ span: 20 }}
-        style={styleObj}
+        labelCol={{ span: 3 }}
+        wrapperCol={{ span: 21 }}
+        style={styleObj} size="large"
         initialValues={{ remember: true }}
         onFinish={onFinish}
         onFinishFailed={onFinishFailed}
