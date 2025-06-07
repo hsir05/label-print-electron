@@ -9,6 +9,7 @@ import Main from "./pages/main";
 import History from "./pages/history";
 import Db from './pages/db'
 import Record from './pages/record'
+import Print from "./pages/print";
 import Login from './pages/login'
 import './index.less';
 
@@ -39,6 +40,10 @@ const router = createHashRouter([
       {
         path: "record",
         element: <Record />,
+      },
+      {
+        path: "print",
+        element: <Print />,
       },
     ],
   },

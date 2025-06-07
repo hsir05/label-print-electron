@@ -112,9 +112,7 @@ const Main = () => {
         });
 
         setSnCode(snCode);
-
         const maxSerial = res[0].max_serial;
-
         setMaxSerial(maxSerial);
 
         let snList: string[] = [];
@@ -300,12 +298,9 @@ const Main = () => {
             >
                 生成条码
             </Button>
-            {/* <Button type="primary" onClick={printList}>
-                选择打印机{" "}
-            </Button> */}
-            <Button type="primary" onClick={printLabel1} className="ml-15">
+            {/* <Button type="primary" onClick={printLabel1} className="ml-15">
                 打印1
-            </Button>
+            </Button> */}
             <Button type="primary" onClick={printLabel} className="ml-15">
                 打印2
             </Button>
