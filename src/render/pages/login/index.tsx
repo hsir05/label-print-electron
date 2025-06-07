@@ -18,6 +18,7 @@ const Login = () => {
         console.log(res);
         if (res.length > 0) {
             message.success("登录成功!");
+            sessionStorage.setItem("token", `token${new Date().getTime()}`);
           navigate("/main");
         } else {
             message.error("账号或密码错误");
