@@ -105,9 +105,7 @@ const Main = () => {
     };
 
     const onFinish: FormProps<FieldType>["onFinish"] = async (values: any) => {
-        console.log("Success:", values);
         setSnCodeList([]);
-
         const snCode = `${values.pcba}0${values.category}${values.specifications}${values.series}${values.productionId}${values.year}${values.week}${values.country}`;
         let res = await window.electronAPI.sqQuery({
             sql: `SELECT MAX(serial_number) AS max_serial FROM history;`,
@@ -290,7 +288,6 @@ const Main = () => {
     const printList = async () => {
         let res = await window.electronAPI.getPrint();
         console.log(res);
-
     };
     const btn = (
         <div className="button-group">

@@ -55,22 +55,6 @@ const initIpcHandle = () => {
             return []
         }
     });
-    // ipcMain.handle('print-dom-element', async (event, htmlContent) => {
-    //     const win = new BrowserWindow({ show: false });
-    //     try {
-    //         await win.loadURL(`data:text/html,${encodeURIComponent(htmlContent)}`);
-    //         return new Promise(async (resolve) => {
-    //             const win = new BrowserWindow({ show: false });
-    //             win.webContents.print({ silent: true }, (success) => {
-    //                 win.close();
-    //                 resolve(success);
-    //             });
-    //         });
-    //     } catch (error) {
-    //         win.close();
-    //         throw error;
-    //     }
-    // });
     ipcMain.handle('print-dom-element', async (event,htmlContent, width=3000, height = 1200) => {
         // 保留窗口引用防止垃圾回收
         const win = new BrowserWindow({ 
@@ -95,9 +79,7 @@ const initIpcHandle = () => {
         }, 30000);
 
         try {
-            // 使用更可靠的加载方式
             await win.loadURL(`data:text/html;charset=UTF-8,${encodeURIComponent(htmlContent)}`);
-            // 双重检查确保内容加载
             await win.webContents.executeJavaScript('document.readyState');
             return await new Promise((resolve) => {
                 const handleLoad = () => {
@@ -108,10 +90,8 @@ const initIpcHandle = () => {
                         resolve({ success });
                     });
                 };
-
                 win.webContents.on('did-finish-load', handleLoad);
                 win.webContents.on('dom-ready', handleLoad);
-                // 额外检查：如果内容已经加载
                 win.webContents.executeJavaScript('document.readyState').then((readyState) => {
                     if (readyState === 'complete') {
                         handleLoad();
