@@ -55,9 +55,9 @@ const initIpcHandle = () => {
             return []
         }
     });
-    ipcMain.handle('print-dom-element', async (event,htmlContent, width=3000, height = 1200) => {
+    ipcMain.handle('print-dom-element', async (event, htmlContent, width, height) => {
         // 保留窗口引用防止垃圾回收
-        const win = new BrowserWindow({ 
+        const win = new BrowserWindow({
             show: false,
             webPreferences: {
                 nodeIntegration: false,
@@ -83,7 +83,13 @@ const initIpcHandle = () => {
             await win.webContents.executeJavaScript('document.readyState');
             return await new Promise((resolve) => {
                 const handleLoad = () => {
-                    win.webContents.print({ silent: true }, (success) => {
+                    win.webContents.print({
+                        silent: true, 
+                        pageSize: {
+                            width: height * 1000, // 毫米转微米
+                            height: width * 1000
+                        }
+                    }, (success) => {
                         clearTimeout(timeout);
                         resolved = true;
                         win.close();

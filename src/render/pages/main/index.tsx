@@ -9,7 +9,7 @@ import {
     Col,
     Row,
     Select,
-    Card, Tag,
+    Card,
     InputNumber,
 } from "antd";
 import { exportToExcel } from "../../../common/db";
@@ -154,11 +154,14 @@ const Main = () => {
     };
     const createBarCode = (snCode: string = "601211KBD0000018") => {
         JsBarcode("#barcode", snCode, {
-            format: "CODE128",
-            lineColor: "#000",
-            width: 1.3,
-            height: 40,
-            displayValue: true,
+          format: "CODE128",
+          lineColor: "#000",
+          width: 1.3,
+          height: 30,
+          displayValue: true,
+          valid: (bool) => {
+            console.log(bool);
+          },
         });
     };
     const printLabel = async () => {
@@ -183,36 +186,6 @@ const Main = () => {
         } catch (error) {
             console.error("打印出错:", error);
         }
-    };
-    const printLabel1 = async () => {
-        const printWindow = window.open("", "_blank");
-        const canvas = document.getElementById("barcode") as HTMLCanvasElement;
-        let imgHtml = "";
-        if (canvas) {
-            const dataUrl = canvas.toDataURL("image/png");
-            imgHtml = `<img src="${dataUrl}" />`;
-        }
-
-        printWindow.document.write(`
-          <html>
-            <head>
-              <title>打印</title>
-              <style>@page {size:50mm 30mm;margin: 0;} body {margin: 0;padding: 0;width: 50mm;height: 30mm;}</style>
-            </head>
-            <body>
-              ${imgHtml}
-            </body>
-          </html>
-        `);
-
-        printWindow.document.close();
-        printWindow.focus();
-
-        // 添加延迟确保内容加载完成
-        setTimeout(() => {
-            printWindow.print();
-            printWindow.close();
-        }, 500);
     };
     const sqInsertHandle = async (data: any) => {
         await window.electronAPI.sqInsert({ table: "history", data: data });
