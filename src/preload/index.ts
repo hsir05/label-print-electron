@@ -27,8 +27,14 @@ contextBridge.exposeInMainWorld("electronAPI", {
     openFile: () => {
         return ipcRenderer.invoke('openFile') 
     },
-    printDomElement: () => {
-        return ipcRenderer.invoke('print-dom-element')
+    printDomElement: (htmlContent: string, width: number, height: number) => {
+        return ipcRenderer.invoke('print-dom-element', htmlContent, width, height)
+    },
+    printDomElements: () => {
+        return ipcRenderer.invoke('print-dom-elements')
+    },
+    getPrint: () => {
+        return ipcRenderer.invoke('get-printers')
     }
 
 })

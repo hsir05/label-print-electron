@@ -37,22 +37,24 @@ type ExcelDataType = [string, string, string, string];
 const Record = () => {
     const [form] = Form.useForm();
     type FieldType = {
-        order: string;
-        createTime: string;
-        checkboxYear: boolean;
-        year?: string;
-        checkboxWeek?: Boolean;
-        week?: string;
+      order: string;
+      mainOrder:string;
+      createTime: string;
+      checkboxYear: boolean;
+      year?: string;
+      checkboxWeek?: Boolean;
+      week?: string;
     };
     type InfoType = {
       order: string;
+      mainOrder: string;
       createTime: string;
-      wiFiNum:  number;
-      fileName: string
+      wiFiNum: number;
+      fileName: string;
     };
     const [data, setData] = React.useState<DataType[]>([]);
     const [excelData, setExcelData] = React.useState<ExcelDataType[]>([]);
-    const [info, setInfo] = React.useState<InfoType>({ order: '', createTime: '', wiFiNum: 0, fileName: '' });
+    const [info, setInfo] = React.useState<InfoType>({ order: '',mainOrder:'' ,createTime: '', wiFiNum: 0, fileName: '' });
     const [yearDisabled, setYearDisabled] = React.useState<boolean>(false);
     const [weekDisabled, setWeekDisabled] = React.useState<boolean>(false);
 
@@ -109,14 +111,20 @@ const Record = () => {
 
     const handleCreate=()=>{
         //显示订单号，下单时间，WiFi模组数量，以及生成的文件名《************WiFi MAC对应表》，文件名中************表示下单时间（年月日格式）+订单号后四位（例如202412085535）
-        const { order, createTime } = form.getFieldsValue([
+        const { order, createTime, mainOrder } = form.getFieldsValue([
           "order",
           "createTime",
+          "mainOrder",
         ]);
-        const code = order.slice(-4);
+        let code =''
+        if (order){
+            code = order.slice(-4);
+        }
+        const mainCode = mainOrder.slice(-4);
         const date = dayjs(createTime).format("YYYYMMDD");
-        const fileName = `${date}${code}WiFi MAC对应表`;
+        const fileName = `${date}${mainCode}${code}WiFi MAC对应表`;
         setInfo({
+          mainOrder: mainOrder,
           order: order,
           createTime: date,
           wiFiNum: excelData.length,
@@ -140,6 +148,10 @@ const Record = () => {
         </div>
     )
     const items: DescriptionsProps["items"] = [
+      {
+        label: "供应商订单号",
+        children: info.mainOrder,
+      },
       {
         label: "订单号",
         children: info.order,
@@ -172,9 +184,20 @@ const Record = () => {
             <Row gutter={24}>
               <Col span={10}>
                 <Form.Item<FieldType>
+                  name="mainOrder"
+                  label="供应商订单号"
+                  rules={[{ required: true, message: "请输入供应商订单号" }]}
+                >
+                  <Input
+                    placeholder="请输入供应商订单号"
+                    style={{ width: "100%" }}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={10}>
+                <Form.Item<FieldType>
                   name="order"
                   label="订单号"
-                  rules={[{ required: true, message: "请输入订单号" }]}
                 >
                   <Input placeholder="请输入订单号" style={{ width: "100%" }} />
                 </Form.Item>

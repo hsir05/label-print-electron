@@ -31,7 +31,8 @@ const items: MenuItem[] = [
   getItem("首页", "/main", <HomeOutlined />),
   getItem("历史记录", "/history", <WindowsOutlined />),
   getItem("数据维护", "/db", <DatabaseOutlined />),
-  getItem("对应表", "/record", <ExceptionOutlined />),
+  //   getItem("对应表", "/record", <ExceptionOutlined />),
+  //   getItem("SNCode打印", "/print", <ExceptionOutlined />),
 ];
 
 const App: React.FC = () => {

@@ -25,7 +25,9 @@ export interface IElectronAPI {
     sqUpdate: (param: updateParam) => Promise<any>,
     sqDelete: (param: deleteParam) => Promise<any>
     openFile: () => Promise<{ data: Uint8Array, filePath: string }>,
-    printDomElement: (htmlContent: string) => Promise<boolean>,
+    printDomElement: (htmlContent: string, width: number, height: number) => Promise<boolean>,
+    printDomElements: (htmlContent: string) => Promise<boolean>,
+    getPrint: () => Promise<any[]>,
 }
 
 declare global {
