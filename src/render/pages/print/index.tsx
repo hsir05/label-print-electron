@@ -1,6 +1,6 @@
 import {
     Button,
-    Form, Input,
+     Input,
     Space,
     Col,
     Row,
@@ -8,7 +8,7 @@ import {
     InputNumber,
     message,
 } from "antd";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { openFile } from "../../../common/db";
 // const printer = require("printer");
 const Print = () => {
