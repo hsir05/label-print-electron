@@ -136,18 +136,18 @@ const Record = () => {
                   <Input placeholder="请输入订单号" style={{ width: "100%" }} />
                 </Form.Item>
               </Col>
-              <Col span={7}>
+              <Col span={6}>
                 <Form.Item<FieldType>
                   label="下单时间"
-                  labelCol={{ span: 7 }}
-                  wrapperCol={{ span: 16 }}
+                  labelCol={{ span: 9 }}
+                  wrapperCol={{ span: 15 }}
                   name="createTime"
                   rules={[{ required: true, message: "请选择下单时间" }]}
                 >
                   <DatePicker style={{ width: "100%" }} />
                 </Form.Item>
               </Col>
-              <Col span={3} style={{ display: "flex" }}>
+              <Col span={2} style={{ display: "flex" }}>
                 <Button
                   type="primary"
                   onClick={handleOpenFile}
