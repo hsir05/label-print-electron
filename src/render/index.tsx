@@ -44,14 +44,14 @@ const router = createHashRouter([
     },
     {
         path: "/",
-        // element: (
-        //   <AuthGuard>
-        //     <App />
-        //   </AuthGuard>
-        // ),
         element: (
+          <AuthGuard>
             <App />
+          </AuthGuard>
         ),
+        // element: (
+        //     <App />
+        // ),
 
         children: [
             {
