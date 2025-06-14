@@ -19,18 +19,16 @@ export const getOpenUrl = (url: string) => {
 
 class WindowPoolManager {
     private static instance: WindowPoolManager;
-    private windowPoolSize: number;
     private windowPools: Map<string, BrowserWindow>;
 
-    private constructor(poolSize: number) {
-        this.windowPoolSize = poolSize;
+    private constructor() {
         this.windowPools = new Map<string, BrowserWindow>();
         this.initPool();
     }
 
-    public static getInstance(poolSize: number = 2): WindowPoolManager {
+    public static getInstance(): WindowPoolManager {
         if (!WindowPoolManager.instance) {
-            WindowPoolManager.instance = new WindowPoolManager(poolSize);
+            WindowPoolManager.instance = new WindowPoolManager();
         }
         return WindowPoolManager.instance;
     }
@@ -54,20 +52,18 @@ class WindowPoolManager {
     }
 
     private initPool() {
-        for (let i = 0; i < this.windowPoolSize; i++) {
-            this.createPoolWindow({
-                width: 1200,
-                height: 800,
-                show: false, // 预创建窗口应为隐藏
-                // resizable: false, // 禁止窗口调整大小
-                // maximizable: false, // 禁止最大化
-                // fullscreenable: false, // 禁止全屏
-                webPreferences: {
-                    preload: join(__dirname, '../preload/index.cjs'),
-                },
-                url: `/preWindow/${i}`,
-            });
-        }
+        this.createPoolWindow({
+            width: 1400,
+            height: 800,
+            show: false, // 预创建窗口应为隐藏
+            resizable: false, // 禁止窗口调整大小
+            maximizable: false, // 禁止最大化
+            fullscreenable: false, // 禁止全屏
+            webPreferences: {
+                preload: join(__dirname, '../preload/index.cjs'),
+            },
+            url: `/preWindow/0`,
+        });
     }
 
     private usePreWindow(): { id: string, win: BrowserWindow } | null {

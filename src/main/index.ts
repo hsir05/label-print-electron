@@ -34,7 +34,7 @@ const main = async () => {
 
     if (import.meta.env.MODE === "dev") {
         //   mainWindow.webContents.openDevTools({ mode: "detach", activate: true });
-        mainWindow.webContents.openDevTools();
+        // mainWindow.webContents.openDevTools();
     }
 
     initMenu(mainWindow);

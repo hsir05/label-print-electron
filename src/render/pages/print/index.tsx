@@ -68,8 +68,6 @@ const Print = () => {
                 console.error("Error opening file:", err);
             });
     };
-    //--------------------------
-
     // 共享
     const handlePrint = async () => {
         try {

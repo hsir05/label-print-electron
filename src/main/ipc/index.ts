@@ -6,8 +6,6 @@ const usb = require('usb');
 const fs = require('fs');
 const { exec } = require('child_process');
 const bwipjs = require('bwip-js');
-
-// const printer = require('printer');
 const net = require('net');
 
 export interface IpcMainWindow {

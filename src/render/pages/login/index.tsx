@@ -41,30 +41,32 @@ const Login = () => {
           width: "100vw",
           height: "100vh",
           background: "linear-gradient(120deg, #d7e2fe 0%, #d7e2fe 100%)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+         position: "relative",
         }}
       >
         <div
           style={{
-            width: 900,
-            height: 500,
+            width: '100%',
+            height: '100%',
+            margin: "0 auto",
             background: "#fff",
             display: "flex",
             borderRadius: 12,
             overflow: "hidden",
+            position: "absolute",
+            top:'50%',
+            left:'50%',
+            transform:'translate(-50%,-50%)'
           }}
         >
           {/* 左侧插画 */}
-          <div
-          >
+          <div>
             <img
               src={img2}
               alt="illustration"
               style={{
                 width: "100%",
-               
+                height: "100%",
               }}
             />
           </div>
@@ -83,9 +85,6 @@ const Login = () => {
                 width: 320,
                 padding: "10px 54px 24px 24px",
                 borderRadius: 12,
-                // boxShadow: "0 2px 16px 0 rgba(31, 38, 135, 0.08)",
-                // boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.18)",
-                background: "#fff",
               }}
             >
               <h2
@@ -100,15 +99,6 @@ const Login = () => {
               >
                 欢迎登录
               </h2>
-              {/* <img
-                src={Logo}
-                alt="illustration"
-                style={{
-                  width: "90%",
-                  maxWidth: 400,
-                  minWidth: 300,
-                }}
-              /> */}
               <Form
                 name="basic"
                 style={{ width: "100%" }}
