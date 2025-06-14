@@ -91,20 +91,20 @@ const DBPage = () => {
           <Table<DataType> rowKey={"id"} columns={columns} dataSource={data} />
         ),
       },
-    //   {
-    //     key: "year",
-    //     label: `年`,
-    //     children: (
-    //       <Table<DataType> rowKey={"id"} columns={columns} dataSource={data} />
-    //     ),
-    //   },
-    //   {
-    //     key: "week",
-    //     label: `周`,
-    //     children: (
-    //       <Table<DataType> rowKey={"id"} columns={columns} dataSource={data} />
-    //     ),
-    //   },
+      {
+        key: "year",
+        label: `年`,
+        children: (
+          <Table<DataType> rowKey={"id"} columns={columns} dataSource={data} />
+        ),
+      },
+      {
+        key: "week",
+        label: `周`,
+        children: (
+          <Table<DataType> rowKey={"id"} columns={columns} dataSource={data} />
+        ),
+      },
     ];
     const sqInsertHandle = async (table: string, data: any) => {
       await window.electronAPI.sqInsert({ table: table, data: data });
