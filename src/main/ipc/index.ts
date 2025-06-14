@@ -209,19 +209,20 @@ const initIpcHandle = () => {
     // usb 打印 BARCODE X,Y,"编码类型",高度,是否可读,旋转,窄条宽度,宽条宽度,"数据"
     ipcMain.handle('print-barcode3', (event, options) => {
         return new Promise((resolve, reject) => {
-            // const tsplCommands = `
-            // SIZE ${options.width||30} mm,${options.height||12} mm
-            // GAP 2 mm,0
-            // DIRECTION 1
-            // CLS
-            // BARCODE ${options.x},${options.y},"128",${options.height || 100},1,0,2,3,"${options.barcodeData || '12345678TEXT'}"
-            // TEXT ${options.textX},${options.textY},"TSS24.BF2",0,1,1,"${options.humanReadable}"
-            // PRINT ${options.num}
-            // END
-            // `.trim();
+            const tsplCommands = `
+            SIZE 60 mm,40 mm
+            GAP 2 mm,0
+            DIRECTION 1
+            CLS
+            BARCODE 20,50,"128",100,1,0,2,3,"${options.barCodeLeft}"
+            TEXT 20,160,"TSS24.BF2",0,1,1,"12345678LEFT"
+            BARCODE 220,50,"128",100,1,0,2,3,"${options.barCodeRight}"
+            PRINT ${options.num}
+            END
+            `.trim();
             
             const tempPath = path.join(process.env.TEMP || __dirname, 'temp-tspl.txt');
-            fs.writeFileSync(tempPath, options.customCommands, 'utf8');
+            fs.writeFileSync(tempPath, tsplCommands, 'utf8');
             exec(`copy /B "${tempPath}" "\\\\localhost\\${options.printerName}"`, (err: any) => {
                 fs.unlinkSync(tempPath);
                 if (err) {

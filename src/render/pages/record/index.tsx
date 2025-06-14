@@ -106,7 +106,7 @@ const Record = () => {
     ];
     return (
       <div className="">
-        <Card title="生成">
+        <Card title="WiFi MAC对应表">
           <Form
             name="basic"
             form={form}
@@ -119,8 +119,8 @@ const Record = () => {
               <Col span={8}>
                 <Form.Item<FieldType>
                   name="mainOrder"
-                  label="供应商订单号" 
-                  wrapperCol={{ span: 16 }}
+                  label="供应商订单号"
+                  wrapperCol={{ span: 15 }}
                   rules={[{ required: true, message: "请输入供应商订单号" }]}
                 >
                   <Input placeholder="请输入供应商订单号" />
@@ -147,7 +147,7 @@ const Record = () => {
                   <DatePicker style={{ width: "100%" }} />
                 </Form.Item>
               </Col>
-              <Col span={3} style={{ display: "flex",}}>
+              <Col span={3} style={{ display: "flex" }}>
                 <Button
                   type="primary"
                   onClick={handleOpenFile}

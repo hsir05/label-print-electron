@@ -16,8 +16,8 @@ const Print = () => {
     const [printData, setPrintData] = useState({
       barcodeData: "101111NBC8400081",
       barcodeType: "128",
-      width: 50,
-      height: 80,
+      width: 60,
+      height: 40,
       x: 2,
       y: 2,
       rotation: 0,
@@ -28,6 +28,7 @@ const Print = () => {
       printerIP: "172.30.203.152",
       num: 1,
       port: 9100,
+      tempFilePath:"C:\\Users\\52276\\Desktop\\双排40x12.btw",
       customCommands: `
             SIZE 60 mm,40 mm
             GAP 2 mm,0
@@ -306,7 +307,7 @@ const Print = () => {
 
     const formBtn = (
       <Space>
-        <Button type="primary" onClick={handleOpenFile} disabled={true}>
+        <Button type="primary" onClick={handleOpenFile}>
           上传
         </Button>
         {/* <Button type="primary" onClick={handlePrintTest}>
@@ -318,13 +319,13 @@ const Print = () => {
         {/* <Button type="primary" onClick={handlePrint2}>
           打印-网络
         </Button> */}
-        <Button type="primary" onClick={handlePrint3}>
-          单排打印
+        <Button type="primary" onClick={handlePrint3} disabled={data.length>0?false:true}>
+          双排打印
         </Button>
         {/* <Button type="primary" onClick={handlePrint4}>
           打印-usb 
         </Button> */}
-        <Button type="primary" onClick={handleTemplatePrint}>
+        <Button type="primary" onClick={handleTemplatePrint} disabled={data.length>0?false:true}>
           双排模板打印
         </Button>
         {/*  <Button type="primary" onClick={handleTemplatePrint}>
@@ -339,10 +340,10 @@ const Print = () => {
       <div>
         <Card title="条码打印设置" extra={formBtn}>
           <Row gutter={24} style={{ display: "flex", alignItems: "center" }}>
-            <span>条码内容:</span>
+            {/* <span>条码内容:</span>
             <Col span={6}>
               <Input value={printData.barcodeData} placeholder="请输入内容" />
-            </Col>
+            </Col> */}
             <span>标签尺寸(mm):</span>
             <Col span={3}>
               <InputNumber
@@ -366,15 +367,22 @@ const Print = () => {
                 style={{ width: "100%" }}
               />
             </Col>
+            <span>模板文件:</span>
+            <Col span={8}>
+              <Input
+                value={printData.tempFilePath}
+                placeholder="请输入模板文件"
+                style={{ width: "100%" }}
+              />
+            </Col>
 
-            <Col span={24}>
-              <span>命令模板:</span>
+            {/* <Col span={24}>
               <Input.TextArea
-                rows={8}
+                rows={12}
                 value={printData.customCommands}
                 placeholder="请输入完整TSPL命令"
               />
-            </Col>
+            </Col> */}
           </Row>
         </Card>
 
