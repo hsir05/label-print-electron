@@ -58,20 +58,13 @@ const Login = () => {
         >
           {/* 左侧插画 */}
           <div
-          // style={{
-          //   flex: 1.2,
-          //   background: "transparent",
-          //   display: "flex",
-          //   alignItems: "center",
-          //   justifyContent: "center",
-          // }}
           >
             <img
               src={img2}
               alt="illustration"
               style={{
                 width: "100%",
-                minWidth: 300,
+               
               }}
             />
           </div>
