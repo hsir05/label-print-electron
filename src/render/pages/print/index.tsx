@@ -372,22 +372,15 @@ const Print = () => {
             </Card>
 
             {data.length > 0 && (
-                <ul className="sncode-list">
+                <div className="sncode-list">
                     {data.map((item, index) => {
                         return (
-                            <li
-                                key={index}
-                                style={{
-                                    marginBottom: "10px",
-                                    marginRight: "10px",
-                                    textAlign: "center",
-                                }}
-                            >
-                                {item}
-                            </li>
+                          <div  key={index} className="sncode-item">
+                            {item}
+                          </div>
                         );
                     })}
-                </ul>
+                </div>
             )}
         </div>
     );
