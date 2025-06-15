@@ -25,7 +25,22 @@ const Login = () => {
                     "user",
                     JSON.stringify({ username: values.account, role: user.account }),
                 );
-                navigate("/main");
+                console.log(user);
+                
+                switch (user.account) {
+                  case "admin1":
+                    navigate("/main");
+                    break;
+                  case "admin2":
+                    navigate("/print");
+                    break;
+                  case "admin3":
+                    navigate("/record");
+                    break;
+                  default:
+                    navigate("/main");
+                    break;
+                }
             } else {
                 message.error("账号或密码错误");
             }

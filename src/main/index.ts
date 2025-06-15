@@ -21,7 +21,6 @@ const initMenu = (mainWindow: BrowserWindow) => {
     ]);
     Menu.setApplicationMenu(null);
 };
-
 const main = async () => {
     const mainWindow = openWindow({
         width: 1400,
