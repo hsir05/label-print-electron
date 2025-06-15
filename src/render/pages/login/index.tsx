@@ -136,13 +136,17 @@ const Login = () => {
                   name="account"
                   rules={[{ required: true, message: "请输入账号!" }]}
                 >
-                  <Input placeholder="请输入账号" allowClear />
+                  <Input placeholder="请输入账号" allowClear maxLength={20} />
                 </Form.Item>
                 <Form.Item<FieldType>
                   name="password"
                   rules={[{ required: true, message: "请输入密码!" }]}
                 >
-                  <Input.Password placeholder="请输入密码" allowClear />
+                  <Input.Password
+                    placeholder="请输入密码"
+                    allowClear
+                    maxLength={20}
+                  />
                 </Form.Item>
                 <Form.Item style={{ marginBottom: 0 }}>
                   <Button
@@ -165,7 +169,9 @@ const Login = () => {
                 </Form.Item>
               </Form>
 
-              <p style={{textAlign:'center',fontSize:'14px'}}>体验版 体验截至时间2025年7月16号</p>
+              <p style={{ textAlign: "center", fontSize: "14px" }}>
+                体验版 体验截至时间2025年7月16号
+              </p>
             </div>
           </div>
         </div>

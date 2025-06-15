@@ -43,7 +43,7 @@ const App: React.FC = () => {
 
     const user = JSON.parse(sessionStorage.getItem("user") || "{}");
     const role = user.role;
-    // const [items, setItems] = useState([]);
+    const [items, setItems] = useState([]);
     // admin1 1q2w3e4r
     // admin2 1a2s3d4f
     // admin3 1z2x3c4v
@@ -65,10 +65,10 @@ const App: React.FC = () => {
         { key: "print", roles: ["admin2", "dev"] },
     ];
     const menus = menuConfig.filter((item) => item.roles.includes(role));
-    // let data: any = menus.map((item) => obj[item.key]);
+    let data: any = menus.map((item) => obj[item.key]);
 
     useEffect(() => {
-        // setItems(data);
+        setItems(data);
     }, []);
 
     const location = useLocation();
