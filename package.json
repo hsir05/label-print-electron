@@ -3,11 +3,6 @@
     "version": "1.0.0",
     "main": "dist/main/index.cjs",
     "type": "module",
-    "imports": {
-        "#Printer": "./src/lib/printer.class.mjs",
-        "#Usb": "./src/lib/usb.class.mjs",
-        "#Tspl": "./src/lib/tspl.class.mjs"
-    },
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "dev": "node ./scripts/dev.js",
