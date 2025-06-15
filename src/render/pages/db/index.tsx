@@ -125,6 +125,7 @@ const DBPage = () => {
                for(let key of data){
                 sqInsertHandle(activeKey, key)
                }
+               queryHandle(activeKey);
             }
         }).catch((err) => {
             console.error("Error opening file:", err);

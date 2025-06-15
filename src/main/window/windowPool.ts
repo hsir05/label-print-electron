@@ -54,7 +54,7 @@ class WindowPoolManager {
     private initPool() {
         this.createPoolWindow({
             width: 1400,
-            height: 800,
+            height: 820,
             show: false, // 预创建窗口应为隐藏
             resizable: false, // 禁止窗口调整大小
             maximizable: false, // 禁止最大化

@@ -13,14 +13,10 @@ const Login = () => {
     const navigate = useNavigate();
     const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
         try {
-            let res = await window.electronAPI.sqQuery({
-                sql: `SELECT * FROM users WHERE account = '${values.account}' AND password = '${values.password}'`,
-                params: [],
-            });
             const now = new Date();
             const month = now.getMonth() + 1;
             const day = now.getDate();
-            if (month > 8 || (month === 8 && day > 10)) {
+            if (month > 7 || (month === 7 && day > 10)) {
                 message.error("账号或密码错误");
                 return;
             }
