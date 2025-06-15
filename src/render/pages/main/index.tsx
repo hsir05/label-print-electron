@@ -179,14 +179,17 @@ const Main = () => {
     };
 
     const exportToFile = () => {
-        console.log(form.getFieldsValue());
         const { num } = form.getFieldsValue(["num"]);
+        let user =
+          sessionStorage.getItem("user") ||
+          JSON.stringify({ username: "admin" });
         const data = {
-            snCode: snCode,
-            create_time: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
-            account: "admin",
-            serial_number: maxSerial + num,
-            num: num,
+          snCode: snCode,
+          create_time: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
+          account: JSON.parse(user).username,
+          serial_number: maxSerial + num,
+          num: num,
+          snCodeList: JSON.stringify(snCodeList),
         };
         sqInsertHandle(data);
 

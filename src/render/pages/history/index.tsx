@@ -50,6 +50,12 @@ const Main = () => {
       key: "create_time",
     },
     {
+      title: "详情",
+      align: "center",
+      dataIndex: "snCodeList",
+      key: "snCodeList",
+    },
+    {
       title: "操作账号",
       align: "center",
       dataIndex: "account",
