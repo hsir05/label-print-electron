@@ -197,7 +197,7 @@ const Main = () => {
           snCode: snCode,
           create_time: format(new Date(), "yyyy-MM-dd HH:mm:ss"),
           account: JSON.parse(user).username,
-          serial_number: maxSerial + num,
+          serial_number: maxSerial + parseInt(num),
           num: num,
           snCodeList: JSON.stringify(snCodeList),
         };
@@ -377,7 +377,8 @@ const Main = () => {
                   name="num"
                   rules={[{ required: true, message: "请输入生成数量" }]}
                 >
-                  <InputNumber max={99999}
+                  <InputNumber
+                    max={99999}
                     placeholder="请输入生成数量"
                     style={{ width: "100%" }}
                   />
@@ -388,18 +389,18 @@ const Main = () => {
         </Card>
 
         {snCodeList.length > 0 && (
-          <ul className="sncode-list">
+          <div className="sncode-list">
             {snCodeList.map((item, index) => {
               return (
-                <li
-                  key={index}
+                <div
+                  key={index} className="sncode-item"
                   style={{ marginTop: "10px", marginRight: "10px" }}
                 >
                   {item}
-                </li>
+                </div>
               );
             })}
-          </ul>
+          </div>
         )}
       </div>
     );

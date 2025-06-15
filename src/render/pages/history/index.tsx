@@ -1,6 +1,7 @@
 import { Space, Table } from "antd";
 import React, { useEffect } from "react";
 import type { TableProps } from "antd";
+import { calc } from "antd/es/theme/internal";
 
 
 interface DataType {
@@ -73,11 +74,14 @@ const Main = () => {
     <Table<DataType>
       rowKey={"id"}
       bordered
+      scroll={{ y: 'calc(100vh - 170px)' }}
       expandable={{
         expandedRowRender: (record) => (
-          <div style={{display:'flex','flexWrap':'wrap'}}>
+          <div style={{ display: "flex", flexWrap: "wrap" }}>
             {record.snCodeList.map((item, index) => (
-              <span style={{ margin: "5px" }}>{item},</span>
+              <span style={{ margin: "5px" }} key={index}>
+                {item},
+              </span>
             ))}
           </div>
         ),
