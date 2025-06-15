@@ -17,8 +17,6 @@ const Login = () => {
                 sql: `SELECT * FROM users WHERE account = '${values.account}' AND password = '${values.password}'`,
                 params: [],
             });
-
-
             const now = new Date();
             const month = now.getMonth() + 1;
             const day = now.getDate();
