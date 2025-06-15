@@ -106,7 +106,7 @@ const Login = () => {
                 >
                     <div
                         style={{
-                            width: 320,
+                            width: 420,
                             padding: "10px 54px 24px 24px",
                             borderRadius: 12,
                         }}
