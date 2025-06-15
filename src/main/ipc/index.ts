@@ -25,7 +25,6 @@ const initIpcOn = (winodws: IpcMainWindow) => {
         event.returnValue = `I got ${msg},ok`
     })
 }
-
 const initIpcHandle = () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ipcMain.handle('openFile', async () => {

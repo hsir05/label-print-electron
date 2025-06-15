@@ -17,7 +17,7 @@ const Login = () => {
             const month = now.getMonth() + 1;
             const day = now.getDate();
             if (month > 7 || (month === 7 && day > 16)) {
-                message.error("账号或密码错误");
+                message.error("体验版已到期，暂无法登录!");
                 return;
             }
 
@@ -123,7 +123,9 @@ const Login = () => {
               >
                 欢迎登录
               </h2>
-
+                {/* <div className="">
+                    <img src="" alt="" />
+                </div> */}
               <Form
                 name="basic"
                 style={{ width: "100%" }}

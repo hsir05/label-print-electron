@@ -4,6 +4,8 @@ import { initIpc } from "./ipc";
 import { openWindow } from "./window";
 import { fileURLToPath } from "url";
 
+import { checkTrialValid } from '../utils/trial-check';
+
 const __dirname = dirname(fileURLToPath(import.meta.url)) 
 const initMenu = (mainWindow: BrowserWindow) => {
     const menu = Menu.buildFromTemplate([
@@ -33,13 +35,20 @@ const main = async () => {
 
     if (import.meta.env.MODE === "dev") {
         //   mainWindow.webContents.openDevTools({ mode: "detach", activate: true });
-        mainWindow.webContents.openDevTools();
+        // mainWindow.webContents.openDevTools();
     }
 
     initMenu(mainWindow);
     initIpc({
         mainWindow
     });
+
+    const trialStatus = checkTrialValid();
+    if (!trialStatus.valid) {
+        // 可以弹窗提示或直接退出
+        console.error(trialStatus.reason);
+        app.quit(); // Electron 下直接退出应用
+    }
 };
 
 app.on('window-all-closed', () => {
