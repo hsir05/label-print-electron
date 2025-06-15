@@ -155,30 +155,6 @@ class Database {
                 });
             })
             .then(() => {
-                return this.query({
-                    sql: `
-                    CREATE TABLE IF NOT EXISTS users (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    account varchar,
-                    password varchar,
-                    status tinyint
-                    )
-                `,
-                });
-            })
-            // .then(() => {
-            //     return this.insert({ table: 'users', data: { account: 'admin1', password: '1q2w3e4r', status: 1}});
-            // })
-            // .then(() => {
-            //     return this.insert({ table: 'users', data: { account: 'admin2', password: '1a2s3d4f', status: 1 } });
-            // })
-            // .then(() => {
-            //     return this.insert({ table: 'users', data: { account: 'admin3', password: '1z2x3c4v', status: 1 } });
-            // })
-            // .then(() => {
-            //     return this.insert({ table: 'users', data: { account: 'dev', password: '1q2w3e4r', status: 3 } });
-            // })
-            .then(() => {
                 console.log("Database schema initialized.");
             }).catch((err) => {
                 console.error("Error initializing database schema:", err);
