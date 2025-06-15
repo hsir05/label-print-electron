@@ -2,7 +2,6 @@ import { Button, Form, Input, message } from "antd";
 import React from "react";
 import type { FormProps } from "antd";
 import { useNavigate } from "react-router-dom";
-import img1 from "../../../dashboard.png"
 import img2 from "../../../bg.png"
 
 type FieldType = {

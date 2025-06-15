@@ -2,10 +2,10 @@ import { BrowserWindow, ipcMain, IpcMainEvent, IpcMainInvokeEvent, dialog, shell
 import { deleteParam, insertParam, queryParam, sqDelete, sqInsert, sqQuery, sqUpdate, updateParam } from "@/common/db"
 import path from "path";
 
-const usb = require('usb');
+// const usb = require('usb');
 const fs = require('fs');
 const { exec } = require('child_process');
-const bwipjs = require('bwip-js');
+// const bwipjs = require('bwip-js');
 const net = require('net');
 
 export interface IpcMainWindow {
@@ -108,24 +108,24 @@ const initIpcHandle = () => {
         }
     });
     // 生成条码图片并返回base64
-    ipcMain.handle('generate-barcode-preview', async (event, options) => {
-        try {
-            const png = await bwipjs.toBuffer({
-                bcid: 'code128',       // 条码类型
-                text: options.barcodeData, // 条码内容
-                scale: 3,              // 缩放比例
-                height: 15,            // 条码高度(mm)
-                includetext: true,     // 包含可读文本
-                textxalign: 'center',  // 文本居中
-                textmarginTop: 25,
-                fontsize: 16,
-            });
-            return 'data:image/png;base64,' + png.toString('base64');
-        } catch (error) {
-            console.error('生成条码失败:', error);
-            throw error;
-        }
-    });
+    // ipcMain.handle('generate-barcode-preview', async (event, options) => {
+    //     try {
+    //         const png = await bwipjs.toBuffer({
+    //             bcid: 'code128',       // 条码类型
+    //             text: options.barcodeData, // 条码内容
+    //             scale: 3,              // 缩放比例
+    //             height: 15,            // 条码高度(mm)
+    //             includetext: true,     // 包含可读文本
+    //             textxalign: 'center',  // 文本居中
+    //             textmarginTop: 25,
+    //             fontsize: 16,
+    //         });
+    //         return 'data:image/png;base64,' + png.toString('base64');
+    //     } catch (error) {
+    //         console.error('生成条码失败:', error);
+    //         throw error;
+    //     }
+    // });
     // 共享打印
     ipcMain.handle('print-barcode', (event, options) => {
         return new Promise((resolve, reject) => {
@@ -204,7 +204,6 @@ const initIpcHandle = () => {
             });
         });
     });
-    // usb 打印 BARCODE X,Y,"编码类型",高度,是否可读,旋转,窄条宽度,宽条宽度,"数据"
     ipcMain.handle('print-barcode3', (event, options) => {
         return new Promise((resolve, reject) => {
             const tsplCommands = `
@@ -231,49 +230,47 @@ const initIpcHandle = () => {
             });
         });
     });
-    ipcMain.handle('print-barcode4', (event, options) => {
-        try {
-            // 1. 查找 TSC TX310 打印机（需替换 VendorID/ProductID）
+    // ipcMain.handle('print-barcode4', (event, options) => {
+    //     try {
+    //         // 1. 查找 TSC TX310 打印机（需替换 VendorID/ProductID）
+    //         const devices = usb.getDeviceList();
+    //         const printer = devices.find((device: any) =>
+    //             device.deviceDescriptor.idVendor === 0x1203 && // TSC VendorID
+    //             device.deviceDescriptor.idProduct === 0x0234   // TSC TX310 ProductID
+    //         );
+    //         if (!printer) throw new Error('TSC 打印机未连接！');
+    //         // 0483 是 VendorID（厂商ID）
+    //         // 5740 是 ProductID（产品ID）
 
-            const devices = usb.getDeviceList();
-            const printer = devices.find((device: any) =>
-                device.deviceDescriptor.idVendor === 0x1203 && // TSC VendorID
-                device.deviceDescriptor.idProduct === 0x0234   // TSC TX310 ProductID
-            );
-            if (!printer) throw new Error('TSC 打印机未连接！');
-            // 0483 是 VendorID（厂商ID）
-            // 5740 是 ProductID（产品ID）
+    //         const device = usb.findByIds(0x1203, 0x0234); // 示例 ID，请替换为你的设备
+    //         if (!device) throw new Error('未找到 TSC 打印机！');
 
-            const device = usb.findByIds(0x1203, 0x0234); // 示例 ID，请替换为你的设备
-            if (!device) throw new Error('未找到 TSC 打印机！');
+    //         // 2. 打开设备并发送 TSPL 指令
+    //         device.open();
+    //         const iface = device.interface(0);
+    //         if (iface.isKernelDriverActive()) iface.detachKernelDriver();
+    //         iface.claim();
 
-            // 2. 打开设备并发送 TSPL 指令
-            device.open();
-            const iface = device.interface(0);
-            if (iface.isKernelDriverActive()) iface.detachKernelDriver();
-            iface.claim();
-
-            const endpoint = iface.endpoint(0x01); // 输出端点
-            const tsplCommands = `
-             SIZE ${options.width} mm,${options.height} mm
-             GAP 2 mm,0
-             DIRECTION 1
-             CLS
-             BARCODE ${options.x},${options.y},"${options.barcodeType}",${options.height - 10},1,0,${options.rotation},2,"${options.barcodeData}"
-             TEXT ${options.textX},${options.textY},"TSS24.BF2",0,1,1,"${options.humanReadable}"
-             PRINT ${options.num}
-             END
-             `.trim();
-            endpoint.transfer(Buffer.from(tsplCommands), (err: any) => {
-                if (err) throw err;
-                device.close();
-            });
-            return { success: true };
-        } catch (err) {
-            return { success: false, error: err };
-        }
-
-    });
+    //         const endpoint = iface.endpoint(0x01); // 输出端点
+    //         const tsplCommands = `
+    //          SIZE ${options.width} mm,${options.height} mm
+    //          GAP 2 mm,0
+    //          DIRECTION 1
+    //          CLS
+    //          BARCODE ${options.x},${options.y},"${options.barcodeType}",${options.height - 10},1,0,${options.rotation},2,"${options.barcodeData}"
+    //          TEXT ${options.textX},${options.textY},"TSS24.BF2",0,1,1,"${options.humanReadable}"
+    //          PRINT ${options.num}
+    //          END
+    //          `.trim();
+    //         endpoint.transfer(Buffer.from(tsplCommands), (err: any) => {
+    //             if (err) throw err;
+    //             device.close();
+    //         });
+    //         return { success: true };
+    //     } catch (err) {
+    //         return { success: false, error: err };
+    //     }
+    // });
     ipcMain.handle('print-two-barcode', (event, name, commands) => {
         // return new Promise((resolve, reject) => {
         //     // TSPL 命令构建

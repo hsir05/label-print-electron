@@ -1,5 +1,4 @@
 import type { queryParam, insertParam, updateParam, deleteParam } from "./api";
-// import { dbQuery } from "./api"
 import * as XLSX from "xlsx";
 
 export const openFile = async () => {
@@ -28,8 +27,6 @@ export const exportToExcel = (data: any[][], filename: string, sheetName: string
     XLSX.writeFile(workbook, `${filename}.xlsx`);
   };
 export const sqQuery = (param: queryParam) => {
-  
-  // return dbQuery(param)
   if (import.meta.env.VITE_CURRENT_RUN_MODE === "render") {
     return window.electronAPI.sqQuery(param);
   } else {

@@ -1,9 +1,7 @@
 import { app } from "electron";
 import * as path from "path";
-// import path from 'path'
 import * as sqlite3 from "sqlite3";
 
-// 获取用户数据目录
 const userDataPath = app.getPath("userData");
 const dbPath = path.join(userDataPath, "sqliteDatabase.db");
 

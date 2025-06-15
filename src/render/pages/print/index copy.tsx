@@ -1,6 +1,6 @@
 import {
     Button,
-    Form, Input,
+    Input,
     Space,
     Col,
     Row,
@@ -9,9 +9,8 @@ import {
     message,
 } from "antd";
 import React, { useEffect, useState } from "react";
-import type { FormProps } from "antd";
 import { openFile } from "../../../common/db";
-import JsBarcode from "jsbarcode";
+// import JsBarcode from "jsbarcode";
 
 const Print = () => {
     const [data, setData] = React.useState<string[]>([]);
@@ -49,55 +48,48 @@ const Print = () => {
                 console.error("Error opening file:", err);
             });
     };
-    const createBarCode = (ele: string, snCode: string) => {
-        const { codeHeight } = form.getFieldsValue(["codeHeight"]);
-        JsBarcode(ele, snCode, {
-            format: "CODE128",
-            lineColor: "#000",
-            width: 1.3, //每个条形码线条的宽度（数值越大条越宽）
-            height: codeHeight || 70, //条形码的高度（单位 px）
-            displayValue: true,
-            valid: (bool) => {
-                if (bool) {
-                    setTimeout(() => {
-                        printLabel();
-                    }, 400);
-                } else {
-                    message.error("条码生成失败");
-                }
-            },
-        });
-    };
-    const printLabel = async () => {
-        try {
-            const canvas = document.getElementById("barcode1") as HTMLCanvasElement;
-            let imgHtml = "";
-            if (canvas) {
-                const dataUrl = canvas.toDataURL("image/png");
-                imgHtml = `<img id="label" src="${dataUrl}" width="100%" height="100%"  />`;
-            }
-            const { width, height, scaleFactor } = form.getFieldsValue([
-                "width",
-                "height",
-                "scaleFactor",
-            ]);
+    // const createBarCode = (ele: string, snCode: string) => {
+        
+    //     JsBarcode(ele, snCode, {
+    //         format: "CODE128",
+    //         lineColor: "#000",
+    //         width: 1.3, //每个条形码线条的宽度（数值越大条越宽）
+    //         height: 70, //条形码的高度（单位 px）
+    //         displayValue: true,
+    //         valid: (bool) => {
+    //             if (bool) {
+    //                 setTimeout(() => {
+    //                     printLabel();
+    //                 }, 400);
+    //             } else {
+    //                 message.error("条码生成失败");
+    //             }
+    //         },
+    //     });
+    // };
+    // const printLabel = async () => {
+    //     try {
+    //         const canvas = document.getElementById("barcode1") as HTMLCanvasElement;
+    //         let imgHtml = "";
+    //         if (canvas) {
+    //             const dataUrl = canvas.toDataURL("image/png");
+    //             imgHtml = `<img id="label" src="${dataUrl}" width="100%" height="100%"  />`;
+    //         }
+    //        const width=80, height=30, scaleFactor=1; 
 
-            const html = `<!DOCTYPE html><html><style>@page {size:${width}mm ${height}mm;margin: 0;} body {margin: 0;padding: 0;}</style><body>${imgHtml}</body></html>`;
-            const success = await window.electronAPI.printDomElement(
-                html,
-                width,
-                height,
-                scaleFactor
-            );
-            if (!success) throw new Error("打印失败");
-            console.log("打印结果:", success);
-        } catch (error) {
-            console.error("打印出错:", error);
-        }
-    };
-    //--------------------------
-
-
+    //         const html = `<!DOCTYPE html><html><style>@page {size:${width}mm ${height}mm;margin: 0;} body {margin: 0;padding: 0;}</style><body>${imgHtml}</body></html>`;
+    //         const success = await window.electronAPI.printDomElement(
+    //             html,
+    //             width,
+    //             height,
+    //             scaleFactor
+    //         );
+    //         if (!success) throw new Error("打印失败");
+    //         console.log("打印结果:", success);
+    //     } catch (error) {
+    //         console.error("打印出错:", error);
+    //     }
+    // };
     const handlePrint = async () => {
         try {
             const result = await window.electronAPI.printBarcode(printData);

@@ -48,12 +48,10 @@
     },
     "dependencies": {
         "@ant-design/icons": "^6.0.0",
-        "bwip-js": "^4.6.0",
         "date-fns": "^4.1.0",
         "html-to-image": "^1.11.13",
         "jsbarcode": "^3.11.6",
         "sqlite3": "^5.1.7",
-        "usb": "^2.15.0",
         "xlsx": "^0.18.5"
     },
     "build": {
