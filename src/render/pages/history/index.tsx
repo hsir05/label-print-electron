@@ -10,6 +10,7 @@ interface DataType {
   account: string;
   serial_number: number;
   num: number;
+  snCodeList:  string[];
 }
 const Main = () => {
   const [data, setData] = React.useState<DataType[]>([]);
@@ -50,12 +51,6 @@ const Main = () => {
       key: "create_time",
     },
     {
-      title: "详情",
-      align: "center",
-      dataIndex: "snCodeList",
-      key: "snCodeList",
-    },
-    {
       title: "操作账号",
       align: "center",
       dataIndex: "account",
@@ -68,6 +63,9 @@ const Main = () => {
       sql: `SELECT * FROM history`,
       params: [],
     });
+    for(let key of res){
+        key.snCodeList = JSON.parse(key.snCodeList);
+    }
     setData(res);
   };
 
@@ -75,6 +73,15 @@ const Main = () => {
     <Table<DataType>
       rowKey={"id"}
       bordered
+      expandable={{
+        expandedRowRender: (record) => (
+          <div style={{display:'flex','flexWrap':'wrap'}}>
+            {record.snCodeList.map((item, index) => (
+              <span style={{ margin: "5px" }}>{item},</span>
+            ))}
+          </div>
+        ),
+      }}
       columns={columns}
       dataSource={data}
     />
