@@ -56,9 +56,9 @@ class WindowPoolManager {
             width: 1400,
             height: 820,
             show: false, // 预创建窗口应为隐藏
-            resizable: false, // 禁止窗口调整大小
-            maximizable: false, // 禁止最大化
-            fullscreenable: false, // 禁止全屏
+            // resizable: false, // 禁止窗口调整大小
+            // maximizable: false, // 禁止最大化
+            // fullscreenable: false, // 禁止全屏
             webPreferences: {
                 preload: join(__dirname, '../preload/index.cjs'),
             },

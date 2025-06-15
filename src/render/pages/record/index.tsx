@@ -158,6 +158,7 @@ const Record = () => {
                 <Button
                   type="primary"
                   htmlType="submit"
+                  disabled={excelData.length >0?false:true}
                   style={{ marginLeft: 10 }}
                 >
                   生成
@@ -167,7 +168,7 @@ const Record = () => {
           </Form>
         </Card>
 
-        {excelData.length > 0 && (
+        {info.fileName && (
           <Card title="预览" extra={okBtn} style={{ marginTop: 20 }}>
             <Descriptions
               bordered

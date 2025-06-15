@@ -70,47 +70,24 @@ class Database {
         }).then(() => {
             return this.query({
                 sql: `
-            CREATE TABLE IF NOT EXISTS category (
+            CREATE TABLE IF NOT EXISTS manufacturer (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               label varchar,
               value varchar
             )
           `,
             });
-        })
-            .then(() => {
-                return this.query({
-                    sql: `
-            CREATE TABLE IF NOT EXISTS specifications (
+        }).then(() => {
+            return this.query({
+                sql: `
+            CREATE TABLE IF NOT EXISTS productCode (
               id INTEGER PRIMARY KEY AUTOINCREMENT,
               label varchar,
               value varchar
             )
           `,
-                });
-            })
-            .then(() => {
-                return this.query({
-                    sql: `
-            CREATE TABLE IF NOT EXISTS series (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              label varchar,
-              value varchar
-            )
-          `,
-                });
-            })
-            .then(() => {
-                return this.query({
-                    sql: `
-            CREATE TABLE IF NOT EXISTS productionId (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              label varchar,
-              value varchar
-            )
-          `,
-                });
-            }).then(() => {
+            });
+        }).then(() => {
                 return this.query({
                     sql: `
             CREATE TABLE IF NOT EXISTS year (
@@ -179,7 +156,8 @@ class Database {
         return new Promise<any[]>((resolve, reject) => {
             this.db.all(param.sql, param.params, (err, rows) => {
                 if (err) {
-                    reject(err);
+                    // reject(err);
+                    resolve([]);
                 } else {
                     resolve(rows);
                 }

@@ -11,6 +11,7 @@ import {
     Select,
     Card,
     InputNumber,
+    message,
 } from "antd";
 import { exportToExcel } from "../../../common/db";
 import { getISOWeek, format } from "date-fns";
@@ -27,13 +28,11 @@ const Main = () => {
     const [form] = Form.useForm();
 
     const [PCBAData, setPCBAData] = React.useState<DataType[]>([]);
-    const [categoryData, setCategoryData] = React.useState<DataType[]>([]);
-    const [specificationsData, setSpecificationsData] = React.useState<
-        DataType[]
+    const [productCodeData, setProductCodeData] = React.useState<
+      DataType[]
     >([]);
-    const [seriesData, setSeriesData] = React.useState<DataType[]>([]);
-    const [productionIdData, setProductionIdData] = React.useState<DataType[]>(
-        [],
+    const [manufacturerData, setManufacturerData] = React.useState<DataType[]>(
+      [],
     );
     const [countryData, setCountryData] = React.useState<DataType[]>([]);
     const [yearData, setYearData] = React.useState<DataType[]>([]);
@@ -42,30 +41,26 @@ const Main = () => {
     const [weekDisabled, setWeekDisabled] = React.useState<boolean>(false);
     const [snCode, setSnCode] = React.useState<string>("");
     const [snCodeList, setSnCodeList] = React.useState<string[]>([]);
-    const [maxSerial, setMaxSerial] = React.useState<string>("");
+    const [maxSerial, setMaxSerial] = React.useState<number>(0);
 
     type FieldType = {
-        pcba?: string;
-        category?: string;
-        specifications?: string;
-        series?: string;
-        productionId?: string;
-        zzc?: string;
-        checkboxYear?: Boolean;
-        year?: string;
-        checkboxWeek?: Boolean;
-        week?: string;
-        country?: string;
-        serialNumber?: string;
-        num: number;
+      pcba?: string;
+      productCode?: string;
+      manufacturer?: string;
+      zzc?: string;
+      checkboxYear?: Boolean;
+      year?: string;
+      checkboxWeek?: Boolean;
+      week?: string;
+      country?: string;
+      serialNumber?: string;
+      num: number;
     };
 
     useEffect(() => {
         queryHandle("pcba");
-        queryHandle("category");
-        queryHandle("specifications");
-        queryHandle("series");
-        queryHandle("productionId");
+        queryHandle("productCode");
+        queryHandle("manufacturer");
         queryHandle("country");
         queryHandle("year");
         queryHandle("week");
@@ -82,41 +77,56 @@ const Main = () => {
 
     }, []);
     const onFinish: FormProps<FieldType>["onFinish"] = async (values: any) => {
-        setSnCodeList([]);
-        const currentYear = yearData.find((item: DataType) => item.label === values.year);
-        const currentWeek = weekData.find((item: DataType) => item.label === values.week);
+      setSnCodeList([]);
+      const currentYear = yearData.find(
+        (item: DataType) => item.label === values.year,
+      );
+      const currentWeek = weekData.find(
+        (item: DataType) => item.label === values.week,
+      );
 
-        const snCode = `${values.pcba}0${values.category}${values.specifications}${values.series}${values.productionId}${currentYear?.value}${currentWeek?.value}${values.country}`;
-        let res = await window.electronAPI.sqQuery({
-            sql: `SELECT MAX(serial_number) AS max_serial FROM history;`,
-        });
+      const snCode = `${values.pcba}${values.manufacturer}${values.productCode}${currentYear?.value}${currentWeek?.value}${values.country}`;
+      console.log("snCode----", snCode);
 
-        setSnCode(snCode);
-        const maxSerial = res[0].max_serial;
-        setMaxSerial(maxSerial);
+      let history = await window.electronAPI.sqQuery({
+        sql: `SELECT * FROM history WHERE snCode = "${snCode}" ORDER BY serial_number DESC LIMIT 1`,
+      });
+      console.log(history);
 
-        let snList: string[] = [];
-        for (let i = 1; i <= values.num; i++) {
-            let len = `${i + maxSerial}`.length
-            switch (len) {
-                case 1:
-                    snList.push(`${snCode}0000${i + maxSerial}`);
-                    break;
-                case 2:
-                    snList.push(`${snCode}000${i + maxSerial}`);
-                    break;
-                case 3:
-                    snList.push(`${snCode}00${i + maxSerial}`);
-                    break;
-                case 4:
-                    snList.push(`${snCode}0${i + maxSerial}`);
-                    break;
-                case 5:
-                    snList.push(`${snCode}${i + maxSerial}`);
-                    break;
-            }
-        }
-        setSnCodeList(snList);
+      let maxSerial=0
+      if (history.length > 0) {
+        maxSerial = history[0].serial_number;
+      }
+
+      if (maxSerial + values.num>99999) {
+        message.error("流水号超出最大限制!");
+        return 
+      } 
+      setSnCode(snCode);
+      setMaxSerial(maxSerial);
+
+      let snList: string[] = [];
+      for (let i = 1; i <= values.num; i++) {
+          let len = `${i + maxSerial}`.length
+          switch (len) {
+              case 1:
+                  snList.push(`${snCode}0000${i + maxSerial}`);
+                  break;
+              case 2:
+                  snList.push(`${snCode}000${i + maxSerial}`);
+                  break;
+              case 3:
+                  snList.push(`${snCode}00${i + maxSerial}`);
+                  break;
+              case 4:
+                  snList.push(`${snCode}0${i + maxSerial}`);
+                  break;
+              case 5:
+                  snList.push(`${snCode}${i + maxSerial}`);
+                  break;
+          }
+      }
+      setSnCodeList(snList);
     };
     const onReset = () => {
         form.resetFields();
@@ -131,6 +141,12 @@ const Main = () => {
           week: `${week}`,
         });
     };
+    // ---------------------------------生成sn号，从历史记录中查询，如果之前有生成相同参数的，则顺序打印，如果无从1开始
+    // 流水号 最大5位数，如超过则停止并提示 最大限制
+
+    // 数据维护-组装厂数据字段添加，下载功能 
+    // 添加体验版本限制，时间限制
+    // wifi 添加表头
     const formSubmit = () => {
         form.submit();
     }
@@ -143,32 +159,26 @@ const Main = () => {
             params: [],
         });
         switch (tableName) {
-            case "pcba":
-                setPCBAData(res);
-                break;
-            case "category":
-                setCategoryData(res);
-                break;
-            case "specifications":
-                setSpecificationsData(res);
-                break;
-            case "series":
-                setSeriesData(res);
-                break;
-            case "productionId":
-                setProductionIdData(res);
-                break;
-            case "country":
-                setCountryData(res);
-                break;
-            case "year":
-                setYearData(res);
-                break;
-            case "week":
-                setWeekData(res);
-                break;
-            default:
-                break;
+          case "pcba":
+            setPCBAData(res);
+            break;
+          case "productCode":
+            setProductCodeData(res);
+            break;
+          case "manufacturer":
+            setManufacturerData(res);
+            break;
+          case "country":
+            setCountryData(res);
+            break;
+          case "year":
+            setYearData(res);
+            break;
+          case "week":
+            setWeekData(res);
+            break;
+          default:
+            break;
         }
     };
     const onYearCheck = (e: any) => {
@@ -255,12 +265,12 @@ const Main = () => {
               </Col>
               <Col span={8}>
                 <Form.Item<FieldType>
-                  label="产品类别"
-                  name="category"
-                  rules={[{ required: true, message: "请选择产品类别" }]}
+                  label="组装厂"
+                  name="manufacturer"
+                  rules={[{ required: true, message: "请选择产品组装厂" }]}
                 >
-                  <Select placeholder="请选择产品类别" allowClear>
-                    {categoryData.map((item, index) => {
+                  <Select placeholder="请选择产品组装厂" allowClear>
+                    {manufacturerData.map((item, index) => {
                       return (
                         <Option value={item.value} key={index}>
                           {item.label}
@@ -272,46 +282,12 @@ const Main = () => {
               </Col>
               <Col span={8}>
                 <Form.Item<FieldType>
-                  label="产品规格"
-                  name="specifications"
-                  rules={[{ required: true, message: "请选择产品规格" }]}
+                  label="产品代码"
+                  name="productCode"
+                  rules={[{ required: true, message: "请选择产品产品代码" }]}
                 >
-                  <Select placeholder="请选择产品规格" allowClear>
-                    {specificationsData.map((item, index) => {
-                      return (
-                        <Option value={item.value} key={index}>
-                          {item.label}
-                        </Option>
-                      );
-                    })}
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item<FieldType>
-                  label="产品代系"
-                  name="series"
-                  rules={[{ required: true, message: "请选择产品代系" }]}
-                >
-                  <Select placeholder="请选择产品代系" allowClear>
-                    {seriesData.map((item, index) => {
-                      return (
-                        <Option value={item.value} key={index}>
-                          {item.label}
-                        </Option>
-                      );
-                    })}
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item<FieldType>
-                  label="产品序列号"
-                  name="productionId"
-                  rules={[{ required: true, message: "请选择产品序列号" }]}
-                >
-                  <Select placeholder="请选择产品序列号" allowClear>
-                    {productionIdData.map((item, index) => {
+                  <Select placeholder="请选择产品产品代码" allowClear>
+                    {productCodeData.map((item, index) => {
                       return (
                         <Option value={item.value} key={index}>
                           {item.label}
@@ -401,7 +377,7 @@ const Main = () => {
                   name="num"
                   rules={[{ required: true, message: "请输入生成数量" }]}
                 >
-                  <InputNumber
+                  <InputNumber max={99999}
                     placeholder="请输入生成数量"
                     style={{ width: "100%" }}
                   />
@@ -411,18 +387,20 @@ const Main = () => {
           </Form>
         </Card>
 
-       {snCodeList.length>0 && <ul className="sncode-list">
-          {snCodeList.map((item, index) => {
-            return (
-              <li
-                key={index}
-                style={{ marginTop: "10px", marginRight: "10px" }}
-              >
-                {item}
-              </li>
-            );
-          })}
-        </ul>}
+        {snCodeList.length > 0 && (
+          <ul className="sncode-list">
+            {snCodeList.map((item, index) => {
+              return (
+                <li
+                  key={index}
+                  style={{ marginTop: "10px", marginRight: "10px" }}
+                >
+                  {item}
+                </li>
+              );
+            })}
+          </ul>
+        )}
       </div>
     );
 };
