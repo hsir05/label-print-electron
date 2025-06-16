@@ -46,6 +46,12 @@ const initIpcHandle = () => {
         }
         return null
     })
+    ipcMain.handle('openFilePath', async () => {
+        const result = await dialog.showOpenDialog({
+            properties: ['openFile']
+        });
+        return result.filePaths[0]; // 返回用户选择的第一个文件路径
+    });
     ipcMain.handle("get-printers", async () => {
         try {
             const win = new BrowserWindow({ show: false });
@@ -216,7 +222,7 @@ const initIpcHandle = () => {
             PRINT ${options.num}
             END
             `.trim();
-            
+
             const tempPath = path.join(process.env.TEMP || __dirname, 'temp-tspl.txt');
             fs.writeFileSync(tempPath, tsplCommands, 'utf8');
             exec(`copy /B "${tempPath}" "\\\\localhost\\${options.printerName}"`, (err: any) => {
@@ -349,7 +355,7 @@ const initIpcHandle = () => {
                 '/X'
             ].join(' ');
             console.log('模板打印', args);
-            
+
             exec(`"${bartenderPath}" ${args}`, (error: any, stdout: any, stderr: any) => {
                 if (error) {
                     reject(`打印错误: ${error.message}`);

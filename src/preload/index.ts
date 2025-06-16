@@ -23,6 +23,9 @@ contextBridge.exposeInMainWorld("electronAPI", {
     openFile: () => {
         return ipcRenderer.invoke('openFile')
     },
+    openFilePath: () => {
+        return ipcRenderer.invoke('openFilePath')
+    },
     printDomElement: (htmlContent: string, width: number, height: number) => {
         return ipcRenderer.invoke('print-dom-element', htmlContent, width, height)
     },

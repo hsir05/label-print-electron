@@ -133,6 +133,15 @@ const Print = () => {
             console.log('test', err);
         }
     };
+    const getFilePath = async () => {
+      try {
+        const result = await window.electronAPI.openFilePath();
+        console.log("openFilePath", result);
+        setPrintData({ ...printData, tempFilePath: result });
+      } catch (err) {
+        console.log("test", err);
+      }
+    };
     const handlePrint3 = async () => {
         try {
             for (let i = 0; i < data.length / 2; i += 2) {
@@ -256,6 +265,22 @@ const Print = () => {
             message.error(`打印失败: ${error}`);
         }
     };
+    const handleSignleTemplatePrint = async () => {
+      try {
+        const templatePath = "C:\\Users\\52276\\Desktop\\双排40x12.btw";
+
+        for (let i = 0; i < data.length; i ++) {
+          const leftBarcode = data[i];
+          let res = await window.electronAPI.printWithBtwTemplate(
+            printData.tempFilePath || templatePath,
+            {"1": leftBarcode}
+          );
+          console.log("模板打印--------", res);
+        }
+      } catch (error) {
+        message.error(`打印失败: ${error}`);
+      }
+    };
     // const handleTemplatePrint = async () => {
     //     try {
     //         // 模板文件路径 - 根据实际位置调整  C:\Users\H\Desktop>
@@ -291,98 +316,113 @@ const Print = () => {
     // };
 
     const formBtn = (
-        <Space>
-            <Button type="primary" onClick={handleOpenFile}>
-                上传
-            </Button>
-            {/* <Button type="primary" onClick={handlePrintTest}>
+      <Space>
+        <Button type="primary" onClick={handleOpenFile}>
+          上传
+        </Button>
+        {/* <Button type="primary" onClick={handlePrintTest}>
           打印-测试
         </Button> */}
-            {/* <Button type="primary" onClick={handlePrint}>
+        {/* <Button type="primary" onClick={handlePrint}>
           打印-共享
         </Button> */}
-            {/* <Button type="primary" onClick={handlePrint2}>
+        {/* <Button type="primary" onClick={handlePrint2}>
           打印-网络
         </Button> */}
-            <Button type="primary" onClick={handlePrint3} disabled={data.length > 0 ? false : true}>
+        {/* <Button type="primary" onClick={handlePrint3} disabled={data.length > 0 ? false : true}>
                 双排打印
-            </Button>
-            {/* <Button type="primary" onClick={handlePrint4}>
+            </Button> */}
+        {/* <Button type="primary" onClick={handlePrint4}>
           打印-usb 
         </Button> */}
-            <Button type="primary" onClick={handleTemplatePrint} disabled={data.length > 0 ? false : true}>
-                双排模板打印
-            </Button>
-            {/*  <Button type="primary" onClick={handleTemplatePrint}>
+        <Button
+          type="primary"
+          onClick={handleTemplatePrint}
+          disabled={data.length > 0 ? false : true}
+        >
+          双排模板打印
+        </Button>
+        <Button
+          type="primary"
+          onClick={handleSignleTemplatePrint}
+          disabled={data.length > 0 ? false : true}
+        >
+          双排单数据源模板打印
+        </Button>
+        {/*  <Button type="primary" onClick={handleTemplatePrint}>
           模板打印
         </Button>
         <Button type="primary" onClick={printDoubleRowLabel2}>
           模板打印2
         </Button> */}
-        </Space>
+      </Space>
     );
     return (
-        <div>
-            <Card title="条码打印设置" extra={formBtn}>
-                <Row gutter={24} style={{ display: "flex", alignItems: "center" }}>
-                    {/* <span>条码内容:</span>
+      <div>
+        <Card title="条码打印设置" extra={formBtn}>
+          <Row gutter={24} style={{ display: "flex", alignItems: "center" }}>
+            {/* <span>条码内容:</span>
             <Col span={6}>
               <Input value={printData.barcodeData} placeholder="请输入内容" />
             </Col> */}
-                    <span>标签尺寸(mm):</span>
-                    <Col span={3}>
-                        <InputNumber
-                            placeholder="请输入宽度"
-                            value={printData.width}
-                            style={{ width: "100%" }}
-                        />
-                    </Col>
-                    <Col span={3}>
-                        <InputNumber
-                            value={printData.height}
-                            placeholder="请输入高度"
-                            style={{ width: "100%" }}
-                        />
-                    </Col>
-                    <span>打印份数:</span>
-                    <Col span={3}>
-                        <InputNumber
-                            value={printData.num}
-                            placeholder="请输入高度"
-                            style={{ width: "100%" }}
-                        />
-                    </Col>
-                    <span>模板文件:</span>
-                    <Col span={8}>
-                        <Input
-                            value={printData.tempFilePath}
-                            placeholder="请输入模板文件"
-                            style={{ width: "100%" }}
-                        />
-                    </Col>
-
-                    {/* <Col span={24}>
+            {/* <span>标签尺寸(mm):</span>
+            <Col span={3}>
+              <InputNumber
+                placeholder="请输入宽度"
+                value={printData.width}
+                style={{ width: "100%" }}
+              />
+            </Col>
+            <Col span={3}>
+              <InputNumber
+                value={printData.height}
+                placeholder="请输入高度"
+                style={{ width: "100%" }}
+              />
+            </Col>
+            <span>打印份数:</span>
+            <Col span={3}>
+              <InputNumber
+                value={printData.num}
+                placeholder="请输入高度"
+                style={{ width: "100%" }}
+              />
+            </Col> */}
+            <span>模板文件:</span>
+            <Col span={12}>
+              <Input
+                value={printData.tempFilePath}
+                placeholder="请输入模板文件"
+                style={{ width: "100%" }}
+              />
+            </Col>
+            <Col span={4}>
+              <Button type="primary" onClick={getFilePath}>
+                获取文件路径
+              </Button>
+            </Col>
+            {/* <Col span={24}>
               <Input.TextArea
                 rows={12}
                 value={printData.customCommands}
                 placeholder="请输入完整TSPL命令"
               />
             </Col> */}
-                </Row>
-            </Card>
+          </Row>
+        </Card>
 
-            {data.length > 0 && (
-                <div className="sncode-list">
-                    {data.map((item, index) => {
-                        return (
-                          <div  key={index} className="sncode-item">
-                            {item}
-                          </div>
-                        );
-                    })}
+        {data.length > 0 && (
+          <div className="sncode-list">
+            {data.map((item, index) => {
+              return (
+                <div key={index} className="sncode-item">
+                  {item}
                 </div>
-            )}
-        </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     );
 };
 

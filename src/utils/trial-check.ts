@@ -4,8 +4,6 @@ import path from 'path';
 const EXPIRE_TIME = new Date('2025-07-16T23:59:59').getTime();
 // 存储首次运行时间的本地文件路径（可放在用户目录下更隐蔽）
 const firstRunFile = path.join(process.env.APPDATA || __dirname, 'first_run_time.txt');
-console.log(firstRunFile);
-
 export function checkTrialValid(): { valid: boolean; reason?: string } {
     const now = Date.now();
     // 1. 首次运行，写入首次运行时间

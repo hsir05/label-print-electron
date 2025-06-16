@@ -13,6 +13,7 @@ export interface IElectronAPI {
     sqUpdate: (param: updateParam) => Promise<any>,
     sqDelete: (param: deleteParam) => Promise<any>
     openFile: () => Promise<{ data: Uint8Array, filePath: string }>,
+    openFilePath: () => Promise<string >,
     printDomElement: (htmlContent: string, width: number, height: number, scaleFactor:number) => Promise<boolean>,
     printDomElements: (htmlContent: string) => Promise<boolean>,
     getPrint: () => Promise<any[]>,
@@ -23,7 +24,7 @@ export interface IElectronAPI {
     printBarcode4: (option: any) => Promise<boolean>, 
     generateBarcodePreview: (barcodeData: any) => Promise<string>,
     printTwoBarcode: (name: string,commands:string) => Promise<string>,
-    printWithBtwTemplate: (template: string, data: {  '1': string,  '2': string }) => Promise<string>,
+    printWithBtwTemplate: (template: string, data: {  '1': string,  '2'?: string }) => Promise<string>,
 }
 
 declare global {
