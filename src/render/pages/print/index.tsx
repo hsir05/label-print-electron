@@ -134,8 +134,20 @@ const Print = () => {
         }
     };
     const getFilePath = async () => {
+
+       
+        
       try {
         const result = await window.electronAPI.openFilePath();
+        const options = { "1": '123123123','2':'1313123132' };
+        const args = [
+          `/F="${result}"`,
+          ...Object.entries(options).map(([k, v]) => `/P /D="${k}=${v}"`),
+          "/P",
+          "/X",
+        ].join(" ");
+        console.log(args);
+
         console.log("openFilePath", result);
         setPrintData({ ...printData, tempFilePath: result });
       } catch (err) {
