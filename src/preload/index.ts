@@ -53,6 +53,12 @@ contextBridge.exposeInMainWorld("electronAPI", {
     printWithBtwTemplate: (template: string, option:{barcode:string,name:string}) => {
         return ipcRenderer.invoke('print-btw-template', template, option)
     },
+    printVBBarcode1: (template: string, option: { leftBarcode: string, rightBarcode: string }) => {
+        return ipcRenderer.invoke('print-vb-barcode1', template, option)
+    },
+    printVBBarcode2: (template: string, option: { leftBarcode: string, rightBarcode: string }) => {
+        return ipcRenderer.invoke('print-vb-barcode2', template, option)
+    },
     getPrint: () => {
         return ipcRenderer.invoke('get-printers')
     }

@@ -1,7 +1,7 @@
 import { BrowserWindow, ipcMain, IpcMainEvent, IpcMainInvokeEvent, dialog, shell } from "electron"
 import { deleteParam, insertParam, queryParam, sqDelete, sqInsert, sqQuery, sqUpdate, updateParam } from "@/common/db"
 import path from "path";
-
+import os from "os";
 // const usb = require('usb');
 const fs = require('fs');
 const { exec } = require('child_process');
@@ -217,7 +217,6 @@ const initIpcHandle = () => {
             DIRECTION 1
             CLS
             BARCODE 20,50,"128",100,1,0,2,3,"${options.barCodeLeft}"
-            TEXT 20,160,"TSS24.BF2",0,1,1,"12345678LEFT"
             BARCODE 220,50,"128",100,1,0,2,3,"${options.barCodeRight}"
             PRINT ${options.num}
             END
@@ -235,6 +234,35 @@ const initIpcHandle = () => {
             });
         });
     });
+    // return new Promise((resolve, reject) => {
+    //     // TSPL 命令构建
+    //     const tsplCommands = `
+    //     SIZE ${options.width} mm,${options.height} mm
+    //     GAP 2 mm,0
+    //     DIRECTION 1
+    //     CLS
+    //     BARCODE ${options.x},${options.y},"${options.barcodeType}",${options.height - 10},1,0,${options.rotation},2,"${options.barcodeData}"
+    //     TEXT ${options.textX},${options.textY},"TSS24.BF2",0,1,1,"${options.humanReadable}"
+    //     PRINT ${options.num}
+    //     END
+    //   `;
+    //     exec(`echo "${tsplCommands}" > "\\\\localhost\\${options.printerName}"`, (err: any) => {
+    //         if (err) {
+    //             reject(err);
+    //         } else {
+    //             resolve('条码打印成功');
+    //         }
+    //     });
+    // });
+    // return new Promise((resolve, reject) => {
+    //     exec(`echo "${commands}" > "\\\\localhost\\${name}"`, (err: any) => {
+    //         if (err) {
+    //             reject(err);
+    //         } else {
+    //             resolve('条码打印成功');
+    //         }
+    //     });
+    // });
     // ipcMain.handle('print-barcode4', (event, options) => {
     //     try {
     //         // 1. 查找 TSC TX310 打印机（需替换 VendorID/ProductID）
@@ -276,34 +304,94 @@ const initIpcHandle = () => {
     //         return { success: false, error: err };
     //     }
     // });
-    ipcMain.handle('print-two-barcode', (event, name, commands) => {
-        // return new Promise((resolve, reject) => {
-        //     // TSPL 命令构建
-        //     const tsplCommands = `
-        //     SIZE ${options.width} mm,${options.height} mm
-        //     GAP 2 mm,0
-        //     DIRECTION 1
-        //     CLS
-        //     BARCODE ${options.x},${options.y},"${options.barcodeType}",${options.height - 10},1,0,${options.rotation},2,"${options.barcodeData}"
-        //     TEXT ${options.textX},${options.textY},"TSS24.BF2",0,1,1,"${options.humanReadable}"
-        //     PRINT ${options.num}
-        //     END
-        //   `;
-        //     exec(`echo "${tsplCommands}" > "\\\\localhost\\${options.printerName}"`, (err: any) => {
-        //         if (err) {
-        //             reject(err);
-        //         } else {
-        //             resolve('条码打印成功');
-        //         }
-        //     });
-        // });
+    ipcMain.handle('print-vb-barcode1', (event, templatePath, options) => {
         return new Promise((resolve, reject) => {
-            exec(`echo "${commands}" > "\\\\localhost\\${name}"`, (err: any) => {
+            const vbsContent = `
+                Dim btApp, btFormat
+                Set btApp = CreateObject("BarTender.Application")
+                btApp.Visible = False
+                Set btFormat = btApp.Formats.Open("${templatePath}", False, "")
+                btFormat.SetNamedSubStringValue "leftBarcode", "${options.leftBarcode}"
+                btFormat.SetNamedSubStringValue "rightBarcode", "${options.rightBarcode}"
+                btFormat.PrintOut False, False
+                btFormat.Close(1)
+                btApp.Quit
+                Set btFormat = Nothing
+                Set btApp = Nothing
+            `.trim();
+
+            const vbsPath = path.join(process.env.TEMP || __dirname, 'print_bartender.vbs');
+            fs.writeFileSync(vbsPath, vbsContent, 'utf8');
+            exec(`cscript //nologo "${vbsPath}"`, (err: any, stdout: any, stderr: any) => {
                 if (err) {
-                    reject(err);
+                    console.error('打印失败:', err, stderr);
+                    reject(stderr)
                 } else {
-                    resolve('条码打印成功');
+                    console.log('打印成功:', stdout);
+                    resolve(stdout)
                 }
+                fs.unlinkSync(vbsPath);
+            });
+        });
+    });
+    ipcMain.handle('print-vb-barcode2', (event, templatePath, options) => {
+        return new Promise((resolve, reject) => {
+            const vbScript = `
+            Set btApp = CreateObject("BarTender.Application")
+            Set btFormat = btApp.Formats.Open("${templatePath}")
+            btFormat.ExportToClipboard 1 ' 1=btClipboardFormatPDF
+            btFormat.SubStrings.Item(0).Value = "${options.leftBarcode}" ' 左排
+            btFormat.SubStrings.Item(1).Value = "${options.rightBarcode}" ' 右排
+            Set btPrintSetup = btFormat.PrintSetup
+            btPrintSetup.Printer = "TSC TX310"
+            btPrintSetup.IdenticalCopiesOfLabel = 1
+            btFormat.PrintOut False, False
+            btFormat.Close btDoNotSaveChanges
+            btApp.Quit
+          `;
+
+            console.log(vbScript);
+            const tempScriptPath = path.join(process.env.TEMP || __dirname, `print_script_vb.vbs`);
+            fs.writeFileSync(tempScriptPath, vbScript, 'utf8');
+            exec(`cscript //Nologo "${tempScriptPath}"`, (error: any, stdout: any, stderr: any) => {
+                if (error) {
+                    reject(`打印错误: ${error.message}`);
+                    return;
+                }
+                if (stderr) {
+                    reject(`VBScript错误: ${stderr}`);
+                    return;
+                }
+                resolve(stdout);
+                fs.unlinkSync(tempScriptPath);
+            });
+        });
+    })
+    ipcMain.handle('print-btw-template', (event, templatePath, options) => {
+        return new Promise((resolve, reject) => {
+            const bartenderPath = 'C:\\Program Files\\Seagull\\BarTender Suite\\bartend.exe'; // 路径按实际安装调整
+            if (!fs.existsSync(templatePath)) {
+                reject(`模板文件不存在: ${templatePath}`);
+                return;
+            }
+            // if (!fs.existsSync(bartenderPath)) {
+            //     reject('未找到 Bartender 安装路径');
+            //     return;
+            // }
+            const command = `"${bartenderPath}" /P /X /D="leftBarcode=${options.leftBarcode};rightBarcode=${options.rightBarcode}" "${templatePath}"`;
+            exec(command, (err:any, stdout:any, stderr:any) => {
+                if (err) {
+                    console.error(`打印失败- ${err.message}`);
+                    reject(err.message)
+                    return
+                }
+                if (stderr) {
+                    console.error(`错误信息: ${stderr}`);
+                    reject(stderr)
+                    return 
+                }
+                console.log(`打印成功: ${stdout}`);
+                resolve(stdout)
             });
         });
     });
@@ -336,39 +424,37 @@ const initIpcHandle = () => {
     //         return { success: false, error: err };
     //     }
     // })
-    ipcMain.handle('print-btw-template', (event, templatePath, options) => {
-        return new Promise((resolve, reject) => {
-            const bartenderPath = 'C:\\Program Files\\Seagull\\BarTender Suite\\bartend.exe'; // 路径按实际安装调整
-            if (!fs.existsSync(templatePath)) {
-                reject(`模板文件不存在: ${templatePath}`);
-                return;
-            }
-            // if (!fs.existsSync(bartenderPath)) {
-            //     reject('未找到 Bartender 安装路径');
-            //     return;
-            // }
-            // 构造命令行参数
-            const args = [
-                `/F="${templatePath}"`,
-                ...Object.entries(options).map(([k, v]) => `/P /D="${k}=${v}"`),
-                '/P',
-                '/X'
-            ].join(' ');
-            console.log('模板打印', args);
-
-            exec(`"${bartenderPath}" ${args}`, (error: any, stdout: any, stderr: any) => {
-                if (error) {
-                    reject(`打印错误: ${error.message}`);
-                    return;
-                }
-                if (stderr) {
-                    reject(`打印错误: ${stderr}`);
-                    return;
-                }
-                resolve(stdout);
-            });
-        });
-    });
+    
+    // ipcMain.handle('print-btw-template', (event, templatePath, options) => {
+    //     return new Promise((resolve, reject) => {
+    //         const bartenderPath = 'C:\\Program Files\\Seagull\\BarTender Suite\\bartend.exe'; // 路径按实际安装调整
+    //         if (!fs.existsSync(templatePath)) {
+    //             reject(`模板文件不存在: ${templatePath}`);
+    //             return;
+    //         }
+    //         // if (!fs.existsSync(bartenderPath)) {
+    //         //     reject('未找到 Bartender 安装路径');
+    //         //     return;
+    //         // }
+    //         //"C:\Program Files\Seagull\BarTender Suite\BarTnd32.exe" /P /X /D="OrderID=12345;ProductCode=ABC123" "D:\Labels\OrderLabel.btwt"
+    //         // 构造命令行参数
+    //         const args = [
+    //             `/F="${templatePath}"`,
+    //             ...Object.entries(options).map(([k, v]) => `/P /D="${k}=${v}"`),
+    //             '/P', // 打印
+    //             '/X'  // 打印后关闭
+    //         ].join(' ');
+    //         console.log('模板打印', args);
+    //         exec(`"${bartenderPath}" ${args}`, (error: any, stdout: any, stderr: any) => {
+    //             if (error) {
+    //                 console.error('执行错误:', error);
+    //                 reject(`打印错误: ${error.message}`);
+    //                 return;
+    //             }
+    //             resolve(stdout);
+    //         });
+    //     });
+    // });
     ipcMain.handle('sqQuery', (event: IpcMainInvokeEvent, param: queryParam): Promise<any> => {
         return sqQuery(param);
     });

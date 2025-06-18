@@ -163,7 +163,7 @@ const Print = () => {
     };
     const handlePrint3 = async () => {
         try {
-            for (let i = 0; i < data.length; i += 2) {
+            for (let i = 0; i < data.length / 2; i += 2) {
               const leftBarcode = data[i];
               const rightBarcode = data[i + 1] || "";
               const result = await window.electronAPI.printBarcode3({
@@ -239,9 +239,29 @@ const Print = () => {
             console.error("双排打印失败:", error);
         }
     };
+    const printDoubleRowLabel2 = async (data: any) => {
+        try {
+            const printers = await window.electronAPI.getPrint();
+            console.log("打印机列表:", printers);
+            const tscPrinter = printers.find((p) => p.isDefault);
+            console.log(tscPrinter);
+            if (!tscPrinter) {
+                message.error("未找到默认打印机");
+                return;
+            }
+
+            let result = await window.electronAPI.printTwoBarcode(
+                "TSC TX310",
+                data,
+            );
+            console.log("双排打印", result);
+        } catch (error) {
+            console.error("双排打印失败:", error);
+        }
+    };
     const handleTemplatePrint = async () => {
         try {
-            for (let i = 0; i < data.length; i += 2) {
+            for (let i = 0; i < data.length / 2; i += 2) {
                 const leftBarcode = data[i];
                 const rightBarcode = data[i + 1] || "";
                 let res = await window.electronAPI.printWithBtwTemplate(
@@ -256,12 +276,11 @@ const Print = () => {
     };
     const handleVBTempPrint1 = async () => {
       try {
-        for (let i = 0; i < data.length; i += 2) {
+        for (let i = 0; i < data.length; i ++) {
           const leftBarcode = data[i];
-          const rightBarcode = data[i + 1] || "";
           let res = await window.electronAPI.printVBBarcode1(
             printData.tempFilePath,
-            { leftBarcode: leftBarcode, rightBarcode: rightBarcode },
+             { leftBarcode: leftBarcode, rightBarcode: rightBarcode },
           );
           console.log("模板打印--------", res);
         }
@@ -271,9 +290,8 @@ const Print = () => {
     };
     const handleVBTempPrint2 = async () => {
       try {
-        for (let i = 0; i < data.length; i += 2) {
+        for (let i = 0; i < data.length; i++) {
           const leftBarcode = data[i];
-          const rightBarcode = data[i + 1] || "";
           let res = await window.electronAPI.printVBBarcode2(
             printData.tempFilePath,
             { leftBarcode: leftBarcode, rightBarcode: rightBarcode },
@@ -323,6 +341,21 @@ const Print = () => {
         <Button type="primary" onClick={handleOpenFile}>
           上传
         </Button>
+        {/* <Button type="primary" onClick={handlePrintTest}>
+          打印-测试
+        </Button> */}
+        {/* <Button type="primary" onClick={handlePrint}>
+          打印-共享
+        </Button> */}
+        {/* <Button type="primary" onClick={handlePrint2}>
+          打印-网络
+        </Button> */}
+        {/* <Button type="primary" onClick={handlePrint3} disabled={data.length > 0 ? false : true}>
+                双排打印
+            </Button> */}
+        {/* <Button type="primary" onClick={handlePrint4}>
+          打印-usb 
+        </Button> */}
         <Button
           type="primary"
           onClick={handleTemplatePrint}
@@ -330,12 +363,19 @@ const Print = () => {
         >
           双排模板打印
         </Button>
-        <Button type="primary" onClick={handleVBTempPrint1}  disabled={data.length > 0 ? false : true}>
-          模板vb打印1
+        <Button
+          type="primary"
+          onClick={handleVBTempPrint}
+          disabled={data.length > 0 ? false : true}
+        >
+          双排vb模板打印
         </Button>
-        <Button type="primary" onClick={handleVBTempPrint2}  disabled={data.length > 0 ? false : true}>
-          模板vb打印2
+        {/*  <Button type="primary" onClick={handleTemplatePrint}>
+          模板打印
         </Button>
+        <Button type="primary" onClick={printDoubleRowLabel2}>
+          模板打印2
+        </Button> */}
       </Space>
     );
     return (

@@ -14,7 +14,7 @@ const App = () => {
         const now = new Date();
         const month = now.getMonth() + 1;
         const day = now.getDate();
-        if (month > 7 || (month === 6 && day > 16)) {
+        if (month > 7 || (month === 7 && day > 16)) {
             sessionStorage.clear()
             navigate("/login");
         }
