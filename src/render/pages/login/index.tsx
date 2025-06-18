@@ -24,7 +24,6 @@ const Login = () => {
             if (
                 (values.account === "admin1" && values.password === "1q2w3e4r") ||
                 (values.account === "admin2" && values.password === "1a2s3d4f") ||
-                (values.account === "admin3" && values.password === "1z2x3c4v") ||
                 (values.account === "dev" && values.password === "1q2w3e4r")
             ) {
                 message.success("登录成功!");
@@ -42,9 +41,6 @@ const Login = () => {
                     navigate("/main");
                     break;
                   case "admin2":
-                    navigate("/print");
-                    break;
-                  case "admin3":
                     navigate("/record");
                     break;
                   default:

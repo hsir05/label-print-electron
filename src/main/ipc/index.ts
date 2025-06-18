@@ -336,34 +336,39 @@ const initIpcHandle = () => {
     });
     ipcMain.handle('print-vb-barcode2', (event, templatePath, options) => {
         return new Promise((resolve, reject) => {
-            const vbScript = `
-            Set btApp = CreateObject("BarTender.Application")
-            Set btFormat = btApp.Formats.Open("${templatePath}")
-            btFormat.ExportToClipboard 1 ' 1=btClipboardFormatPDF
-            btFormat.SubStrings.Item(0).Value = "${options.leftBarcode}" ' 左排
-            btFormat.SubStrings.Item(1).Value = "${options.rightBarcode}" ' 右排
-            Set btPrintSetup = btFormat.PrintSetup
-            btPrintSetup.Printer = "TSC TX310"
-            btPrintSetup.IdenticalCopiesOfLabel = 1
-            btFormat.PrintOut False, False
-            btFormat.Close btDoNotSaveChanges
-            btApp.Quit
-          `;
+            const bartenderPath = 'C:\\Program Files\\Seagull\\BarTender Suite\\bartend.exe'; // 路径按实际安装调整
+            if (!fs.existsSync(templatePath)) {
+                reject(`模板文件不存在: ${templatePath}`);
+                return;
+            }
+            // if (!fs.existsSync(bartenderPath)) {
+            //     reject('未找到 Bartender 安装路径');
+            //     return;
+            // }
+            // 构造命令行参数
+            // const args = [
+            //     `/F="${templatePath}"`,
+            //     ...Object.entries(options).map(([k, v]) => `/P /D="${k}=${v}"`),
+            //     '/P', // 打印
+            //     '/X'  // 打印后关闭
+            // ].join(' ');
 
-            console.log(vbScript);
-            const tempScriptPath = path.join(process.env.TEMP || __dirname, `print_script_vb.vbs`);
-            fs.writeFileSync(tempScriptPath, vbScript, 'utf8');
-            exec(`cscript //Nologo "${tempScriptPath}"`, (error: any, stdout: any, stderr: any) => {
+            const args = [
+                '/R',
+                `/F="${templatePath}"`,  // 处理路径中的引号
+                ...Object.entries(options).map(([k, v]) => `/D="${k}=${v}"`), // 所有/D参数
+                '/P', // 打印指令（仅出现一次）
+                '/X'  // 退出
+            ].join(' ');
+
+            console.log('模板打印', args);
+            exec(`"${bartenderPath}" ${args}`, (error: any, stdout: any, stderr: any) => {
                 if (error) {
-                    reject(`打印错误: ${error.message}`);
-                    return;
-                }
-                if (stderr) {
-                    reject(`VBScript错误: ${stderr}`);
+                    console.error('执行错误:', error);
+                    reject(`打印错误: ${error.message} ${stderr}`);
                     return;
                 }
                 resolve(stdout);
-                fs.unlinkSync(tempScriptPath);
             });
         });
     })
@@ -374,26 +379,50 @@ const initIpcHandle = () => {
                 reject(`模板文件不存在: ${templatePath}`);
                 return;
             }
-            // if (!fs.existsSync(bartenderPath)) {
-            //     reject('未找到 Bartender 安装路径');
-            //     return;
-            // }
-            const command = `"${bartenderPath}" /P /X /D="leftBarcode=${options.leftBarcode};rightBarcode=${options.rightBarcode}" "${templatePath}"`;
-            exec(command, (err:any, stdout:any, stderr:any) => {
-                if (err) {
-                    console.error(`打印失败- ${err.message}`);
-                    reject(err.message)
-                    return
+            const args = [
+                '/R',
+                `/F="${templatePath}"`,  // 处理路径中的引号
+                ...Object.entries(options).map(([k, v]) => `/D="${k}=${v}"`), // 所有/D参数
+                '/P', // 打印指令（仅出现一次）
+                '/X'  // 退出
+            ].join(' ');
+
+            console.log('模板打印', args);
+            exec(`"${bartenderPath}" ${args}`, (error: any, stdout: any, stderr: any) => {
+                if (error) {
+                    console.error('执行错误:', error);
+                    reject(`打印错误: ${error.message}`);
+                    return;
                 }
-                if (stderr) {
-                    console.error(`错误信息: ${stderr}`);
-                    reject(stderr)
-                    return 
-                }
-                console.log(`打印成功: ${stdout}`);
-                resolve(stdout)
+                resolve(stdout);
             });
         });
+        // return new Promise((resolve, reject) => {
+        //     const bartenderPath = 'C:\\Program Files\\Seagull\\BarTender Suite\\bartend.exe'; // 路径按实际安装调整
+        //     if (!fs.existsSync(templatePath)) {
+        //         reject(`模板文件不存在: ${templatePath}`);
+        //         return;
+        //     }
+        //     // if (!fs.existsSync(bartenderPath)) {
+        //     //     reject('未找到 Bartender 安装路径');
+        //     //     return;
+        //     // }
+        //     const command = `"${bartenderPath}" /P /X /D="leftBarcode=${options.leftBarcode};rightBarcode=${options.rightBarcode}" "${templatePath}"`;
+        //     exec(command, (err:any, stdout:any, stderr:any) => {
+        //         if (err) {
+        //             console.error(`打印失败- ${err.message}`);
+        //             reject(err.message)
+        //             return
+        //         }
+        //         if (stderr) {
+        //             console.error(`错误信息: ${stderr}`);
+        //             reject(stderr)
+        //             return 
+        //         }
+        //         console.log(`打印成功: ${stdout}`);
+        //         resolve(stdout)
+        //     });
+        // });
     });
     // ipcMain.handle('print-btw-template', (event, templatePath) => {
     //     try {
@@ -436,7 +465,6 @@ const initIpcHandle = () => {
     //         //     reject('未找到 Bartender 安装路径');
     //         //     return;
     //         // }
-    //         //"C:\Program Files\Seagull\BarTender Suite\BarTnd32.exe" /P /X /D="OrderID=12345;ProductCode=ABC123" "D:\Labels\OrderLabel.btwt"
     //         // 构造命令行参数
     //         const args = [
     //             `/F="${templatePath}"`,

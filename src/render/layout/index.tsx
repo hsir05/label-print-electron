@@ -46,7 +46,6 @@ const App: React.FC = () => {
     const [items, setItems] = useState([]);
     // admin1 1q2w3e4r
     // admin2 1a2s3d4f
-    // admin3 1z2x3c4v
     // dev 1q2w3e4r
 
     const obj: any = {
@@ -58,11 +57,11 @@ const App: React.FC = () => {
     };
 
     const menuConfig = [
-        { key: "main", roles: ["admin1", "dev"] },
-        { key: "history", roles: ["admin1", "dev"] },
-        { key: "db", roles: ["admin1", "dev"] },
-        { key: "record", roles: ["admin3", "dev"] },
-        { key: "print", roles: ["admin2", "dev"] },
+      { key: "main", roles: ["admin1", "dev"] },
+      { key: "history", roles: ["admin1", "dev"] },
+      { key: "db", roles: ["admin1", "dev"] },
+      { key: "record", roles: ["admin2", "dev"] },
+      { key: "print", roles: ["admin1", "dev"] },
     ];
     const menus = menuConfig.filter((item) => item.roles.includes(role));
     let data: any = menus.map((item) => obj[item.key]);
