@@ -107,7 +107,6 @@ const DBPage = () => {
     const handleOpenFile = async () => {
         openFile().then(async (res) => {
             if (res && res.length > 0) {
-                console.log(res);
                 if (activeKey === 'year') {
                     await window.electronAPI.sqDelete({ table: activeKey });
                     // @ts-ignore
@@ -115,7 +114,6 @@ const DBPage = () => {
                     for (let key of data) {
                         sqInsertHandle("year", key);
                     }
-                    queryHandle(activeKey);
                 } else if (activeKey == 'week') {
                     await window.electronAPI.sqDelete({ table: activeKey });
                     // @ts-ignore
@@ -123,7 +121,6 @@ const DBPage = () => {
                     for (let key of data) {
                         sqInsertHandle("week", key);
                     }
-                    queryHandle(activeKey);
                 } else {
                     await window.electronAPI.sqDelete({ table: "pcba" });
                     await window.electronAPI.sqDelete({ table: "manufacturer" });
@@ -144,16 +141,12 @@ const DBPage = () => {
                         // @ts-ignore
                         countryData.push({ label: key[6]||'', value: key[7]||'' });
                     }
-
                     insertData("pcba", pcbaData);
                     insertData("manufacturer", manufacturerData);
                     insertData("productCode", productCodeData);
                     insertData("country", countryData);
-
-                    queryHandle(activeKey);
                 }
-
-
+                queryHandle(activeKey);
             }
         }).catch((err) => {
             console.error("Error opening file:", err);

@@ -9,6 +9,7 @@ import {
 import type { MenuProps } from 'antd';
 import { Layout, Menu, theme } from "antd";
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import logo from "../../icon.png"
 
 const { Content, Sider } = Layout;
 
@@ -43,11 +44,11 @@ const App: React.FC = () => {
 
     const user = JSON.parse(sessionStorage.getItem("user") || "{}");
     const role = user.role;
+    // const role = 'dev';
     const [items, setItems] = useState([]);
     // admin1 1q2w3e4r
     // admin2 1a2s3d4f
     // dev 1q2w3e4r
-
     const obj: any = {
         main: getItem("首页", "/main", <HomeOutlined />),
         print: getItem("SN码打印", "/print", <SplitCellsOutlined />),
@@ -60,8 +61,8 @@ const App: React.FC = () => {
       { key: "main", roles: ["admin1", "dev"] },
       { key: "history", roles: ["admin1", "dev"] },
       { key: "db", roles: ["admin1", "dev"] },
-      { key: "record", roles: ["admin2", "dev"] },
-      { key: "print", roles: ["admin1", "dev"] },
+      { key: "record", roles: ["admin1", "dev"] },
+      { key: "print", roles: ["admin2", "dev"] },
     ];
     const menus = menuConfig.filter((item) => item.roles.includes(role));
     let data: any = menus.map((item) => obj[item.key]);
@@ -78,35 +79,59 @@ const App: React.FC = () => {
     };
 
     return (
-        <Layout style={{ minHeight: "100vh" }}>
-            <Sider
-                theme="light"
-                collapsible
-                collapsed={collapsed}
-                onCollapse={(value) => setCollapsed(value)}
+      <Layout style={{ minHeight: "100vh" }}>
+        <div>
+          <div
+            className=""
+            style={{
+              width: "120px",
+              height: "33px",
+              backgroundColor: "#fff",
+              textAlign: "right",
+              borderRadius:'6px',
+              overflow: "hidden",
+              margin: "8px 8px 8px 25px",
+            }}
+          >
+            <img
+              src={logo}
+              alt="illustration"
+              style={{
+                width: "99%",
+                height: "100%",
+              }}
+            />
+          </div>
+          <Sider
+            theme="light"
+           
+            collapsed={collapsed}
+            onCollapse={(value) => setCollapsed(value)}
+          >
+            <Menu
+              onSelect={menuOnSelect}
+              selectedKeys={[location.pathname]}
+              mode="inline"
+              items={items}
+            />
+          </Sider>
+        </div>
+
+        <Layout>
+          <Content style={{ margin: "12px" }}>
+            <div
+              style={{
+                padding: 12,
+                minHeight: "100%",
+                background: colorBgContainer,
+                borderRadius: borderRadiusLG,
+              }}
             >
-                <Menu
-                    onSelect={menuOnSelect}
-                    selectedKeys={[location.pathname]}
-                    mode="inline"
-                    items={items}
-                />
-            </Sider>
-            <Layout>
-                <Content style={{ margin: "12px" }}>
-                    <div
-                        style={{
-                            padding: 12,
-                            minHeight: "100%",
-                            background: colorBgContainer,
-                            borderRadius: borderRadiusLG,
-                        }}
-                    >
-                        <Outlet />
-                    </div>
-                </Content>
-            </Layout>
+              <Outlet />
+            </div>
+          </Content>
         </Layout>
+      </Layout>
     );
 };
 

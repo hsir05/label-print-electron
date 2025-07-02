@@ -1,6 +1,5 @@
 import type { queryParam, insertParam, updateParam, deleteParam } from "./api";
 import * as XLSX from "xlsx";
-
 export const openFile = async () => {
     try {
         const result = await window.electronAPI.openFile();

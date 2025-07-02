@@ -63,7 +63,7 @@ const Record = () => {
         }
         const mainCode = mainOrder.slice(-4);
         const date = dayjs(createTime).format("YYYYMMDD");
-        const fileName = `${date}${mainCode}${code}WiFi MAC对应表`;
+        const fileName = `${mainCode}${code}-${date}WiFi MAC对应表`;
         setInfo({
           mainOrder: mainOrder,
           order: order,

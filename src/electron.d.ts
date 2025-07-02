@@ -24,6 +24,7 @@ export interface IElectronAPI {
     printBarcode4: (option: any) => Promise<boolean>, 
     generateBarcodePreview: (barcodeData: any) => Promise<string>,
     printTwoBarcode: (name: string,commands:string) => Promise<string>,
+    // printWithBtwTemplate: (template: string, data: { leftBarcode: string, rightBarcode?: string }) => Promise<string>,
     printWithBtwTemplate: (template: string, data: { leftBarcode: string, rightBarcode?: string }) => Promise<string>,
     printVBBarcode1: (template: string, data: { leftBarcode: string, rightBarcode?: string }) => Promise<string>,
     printVBBarcode2: (template: string, data: { leftBarcode: string, rightBarcode?: string }) => Promise<string>,

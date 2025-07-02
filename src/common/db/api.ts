@@ -9,7 +9,6 @@ export interface queryParam {
     sql: string;
     params?: any[]; 
 }
-
 export interface insertParam {
     table: string;
     data: { [key: string]: any };
@@ -123,11 +122,13 @@ class Database {
                         CREATE TABLE IF NOT EXISTS history (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         snCode varchar,
+                        PCBASNCode varchar,
                         create_time varchar,
                         account varchar,
                         serial_number integer,
                         num integer,
-                        snCodeList string
+                        snCodeList string,
+                        PCBASNCodeList string 
                         )
                     `,
                 });

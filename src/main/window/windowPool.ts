@@ -50,7 +50,6 @@ class WindowPoolManager {
             win,
         };
     }
-
     private initPool() {
         this.createPoolWindow({
             width: 1400,

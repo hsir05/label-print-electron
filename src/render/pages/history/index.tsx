@@ -1,8 +1,6 @@
 import { Space, Table } from "antd";
 import React, { useEffect } from "react";
 import type { TableProps } from "antd";
-import { calc } from "antd/es/theme/internal";
-
 
 interface DataType {
   id: number;
@@ -11,7 +9,8 @@ interface DataType {
   account: string;
   serial_number: number;
   num: number;
-  snCodeList:  string[];
+  snCodeList: string[];
+  PCBASNCodeList:string[]
 }
 const Main = () => {
   const [data, setData] = React.useState<DataType[]>([]);
@@ -66,7 +65,10 @@ const Main = () => {
     });
     for(let key of res){
         key.snCodeList = JSON.parse(key.snCodeList);
+        key.PCBASNCodeList = JSON.parse(key.PCBASNCodeList);
     }
+    console.log(res);
+    
     setData(res);
   };
 
@@ -74,15 +76,27 @@ const Main = () => {
     <Table<DataType>
       rowKey={"id"}
       bordered
-      scroll={{ y: 'calc(100vh - 170px)' }}
+      scroll={{ y: "calc(100vh - 170px)" }}
       expandable={{
         expandedRowRender: (record) => (
-          <div style={{ display: "flex", flexWrap: "wrap" }}>
-            {record.snCodeList.map((item, index) => (
-              <span style={{ margin: "5px" }} key={index}>
-                {item},
-              </span>
-            ))}
+          <div>
+            <h4>成品 SN码</h4>
+            <div style={{ display: "flex", flexWrap: "wrap" }}>
+              {record.snCodeList.map((item, index) => (
+                <span style={{ margin: "5px" }} key={index}>
+                  {item},
+                </span>
+              ))}
+            </div>
+
+            <h4>PCBA SN码</h4>
+            <div style={{ display: "flex", flexWrap: "wrap" }}>
+              {record.PCBASNCodeList.map((item, index) => (
+                <span style={{ margin: "5px" }} key={index}>
+                  {item},
+                </span>
+              ))}
+            </div>
           </div>
         ),
       }}

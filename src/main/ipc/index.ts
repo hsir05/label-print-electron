@@ -2,6 +2,8 @@ import { BrowserWindow, ipcMain, IpcMainEvent, IpcMainInvokeEvent, dialog, shell
 import { deleteParam, insertParam, queryParam, sqDelete, sqInsert, sqQuery, sqUpdate, updateParam } from "@/common/db"
 import path from "path";
 import os from "os";
+
+
 // const usb = require('usb');
 const fs = require('fs');
 const { exec } = require('child_process');
@@ -185,28 +187,70 @@ const initIpcHandle = () => {
             });
         });
     });
-    ipcMain.handle('print-test', (event, options) => {
+    ipcMain.handle('print-btw-template', (event, templatePath, options) => {
         return new Promise((resolve, reject) => {
-            const tsplCommands = `
-            SIZE 60 mm,40 mm
-            GAP 2 mm,0
-            DIRECTION 1
-            CLS
-            BARCODE 50,50,"128",100,1,0,2,"12345678TEXT"
-            PRINT 1
-            END
-            `.trim();
-            console.log('测试 TSPL 指令内容：\n', tsplCommands);
-            const tempPath = path.join(process.env.TEMP || __dirname, 'temp-tspl.txt');
-            fs.writeFileSync(tempPath, tsplCommands, 'utf8');
-            exec(`copy /B "${tempPath}" "\\\\localhost\\TSC TX310"`, (err: any) => {
-                fs.unlinkSync(tempPath);
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve('测试----打印成功');
+            const bartenderPath = 'C:\\Program Files\\Seagull\\BarTender Suite\\bartend.exe'; // 路径按实际安装调整
+            if (!fs.existsSync(templatePath)) {
+                reject(`模板文件不存在: ${templatePath}`);
+                return;
+            }
+            const args = [
+                `/F="${templatePath}"`,  // 处理路径中的引号
+                ...Object.entries(options).map(([k, v]) => `/D="${k}=${v}"`), // 所有/D参数
+                '/P', // 打印指令（仅出现一次）
+                '/X'  // 退出
+            ].join(' ');
+
+            console.log('模板打印', args);
+            console.log(`"${bartenderPath}" ${args}`);
+            
+            exec(`"${bartenderPath}" ${args}`, (error: any, stdout: any, stderr: any) => {
+                if (error) {
+                    console.error('执行错误:', error);
+                    reject(`打印错误: ${error.message}`);
+                    return;
                 }
+                resolve(stdout);
             });
+        });
+        // return new Promise((resolve, reject) => {
+        //     const bartenderPath = 'C:\\Program Files\\Seagull\\BarTender Suite\\bartend.exe'; // 路径按实际安装调整
+        //     if (!fs.existsSync(templatePath)) {
+        //         reject(`模板文件不存在: ${templatePath}`);
+        //         return;
+        //     }
+        //     // if (!fs.existsSync(bartenderPath)) {
+        //     //     reject('未找到 Bartender 安装路径');
+        //     //     return;
+        //     // }
+        //     const command = `"${bartenderPath}" /P /X /D="leftBarcode=${options.leftBarcode};rightBarcode=${options.rightBarcode}" "${templatePath}"`;
+        //     exec(command, (err:any, stdout:any, stderr:any) => {
+        //         if (err) {
+        //             console.error(`打印失败- ${err.message}`);
+        //             reject(err.message)
+        //             return
+        //         }
+        //         if (stderr) {
+        //             console.error(`错误信息: ${stderr}`);
+        //             reject(stderr)
+        //             return 
+        //         }
+        //         console.log(`打印成功: ${stdout}`);
+        //         resolve(stdout)
+        //     });
+        // });
+    });
+    ipcMain.handle('print-two-barcode', (event, printerName, options) => {
+        return new Promise(async (resolve, reject) => {
+            // console.log('测试 TSPL 指令内容：\n', tsplCommands);
+            // exec(`"${tsplCommands.trim()}" "\\\\localhost\\${printerName}"`, (err: any) => {
+            //     if (err) {
+            //         reject(err);
+            //     } else {
+            //         resolve('测试----打印成功');
+            //     }
+            // });
+            
         });
     });
     ipcMain.handle('print-barcode3', (event, options) => {
@@ -372,58 +416,7 @@ const initIpcHandle = () => {
             });
         });
     })
-    ipcMain.handle('print-btw-template', (event, templatePath, options) => {
-        return new Promise((resolve, reject) => {
-            const bartenderPath = 'C:\\Program Files\\Seagull\\BarTender Suite\\bartend.exe'; // 路径按实际安装调整
-            if (!fs.existsSync(templatePath)) {
-                reject(`模板文件不存在: ${templatePath}`);
-                return;
-            }
-            const args = [
-                '/R',
-                `/F="${templatePath}"`,  // 处理路径中的引号
-                ...Object.entries(options).map(([k, v]) => `/D="${k}=${v}"`), // 所有/D参数
-                '/P', // 打印指令（仅出现一次）
-                '/X'  // 退出
-            ].join(' ');
-
-            console.log('模板打印', args);
-            exec(`"${bartenderPath}" ${args}`, (error: any, stdout: any, stderr: any) => {
-                if (error) {
-                    console.error('执行错误:', error);
-                    reject(`打印错误: ${error.message}`);
-                    return;
-                }
-                resolve(stdout);
-            });
-        });
-        // return new Promise((resolve, reject) => {
-        //     const bartenderPath = 'C:\\Program Files\\Seagull\\BarTender Suite\\bartend.exe'; // 路径按实际安装调整
-        //     if (!fs.existsSync(templatePath)) {
-        //         reject(`模板文件不存在: ${templatePath}`);
-        //         return;
-        //     }
-        //     // if (!fs.existsSync(bartenderPath)) {
-        //     //     reject('未找到 Bartender 安装路径');
-        //     //     return;
-        //     // }
-        //     const command = `"${bartenderPath}" /P /X /D="leftBarcode=${options.leftBarcode};rightBarcode=${options.rightBarcode}" "${templatePath}"`;
-        //     exec(command, (err:any, stdout:any, stderr:any) => {
-        //         if (err) {
-        //             console.error(`打印失败- ${err.message}`);
-        //             reject(err.message)
-        //             return
-        //         }
-        //         if (stderr) {
-        //             console.error(`错误信息: ${stderr}`);
-        //             reject(stderr)
-        //             return 
-        //         }
-        //         console.log(`打印成功: ${stdout}`);
-        //         resolve(stdout)
-        //     });
-        // });
-    });
+    
     // ipcMain.handle('print-btw-template', (event, templatePath) => {
     //     try {
     //         const devices = usb.getDeviceList();

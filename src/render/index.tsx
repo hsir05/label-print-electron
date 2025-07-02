@@ -20,6 +20,7 @@ function AuthGuard({ children }) {
     const location = useLocation();
     const navigate = useNavigate();
     const token = sessionStorage.getItem('token');
+    // const token = localStorage.getItem("token");
 
     const isLoggedIn = token ? true : false;
 

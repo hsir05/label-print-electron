@@ -3,6 +3,7 @@ import React from "react";
 import type { FormProps } from "antd";
 import { useNavigate } from "react-router-dom";
 import img2 from "../../../bg.png"
+// import logo from "../../../icon.png"
 
 type FieldType = {
     account?: string;
@@ -29,23 +30,23 @@ const Login = () => {
                 message.success("登录成功!");
                 sessionStorage.setItem("token", `token${new Date().getTime()}`);
                 sessionStorage.setItem(
-                  "user",
-                  JSON.stringify({
-                    username: values.account,
-                    role: values.account,
-                  }),
+                    "user",
+                    JSON.stringify({
+                        username: values.account,
+                        role: values.account,
+                    }),
                 );
 
                 switch (values.account) {
-                  case "admin1":
-                    navigate("/main");
-                    break;
-                  case "admin2":
-                    navigate("/record");
-                    break;
-                  default:
-                    navigate("/main");
-                    break;
+                    case "admin1":
+                        navigate("/main");
+                        break;
+                    case "admin2":
+                        navigate("/print");
+                        break;
+                    default:
+                        navigate("/main");
+                        break;
                 }
             } else {
                 message.error("账号或密码错误");
@@ -119,9 +120,9 @@ const Login = () => {
               >
                 欢迎登录
               </h2>
-                {/* <div className="">
-                    <img src="" alt="" />
-                </div> */}
+              {/* <div className="">
+                <img src={logo} alt="" />
+              </div> */}
               <Form
                 name="basic"
                 style={{ width: "100%" }}
