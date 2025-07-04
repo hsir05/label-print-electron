@@ -40,6 +40,7 @@ const Main = () => {
     const [yearDisabled, setYearDisabled] = React.useState<boolean>(false);
     const [weekDisabled, setWeekDisabled] = React.useState<boolean>(false);
     const [snCode, setSnCode] = React.useState<string>("");
+    const [snCodeFile, setSnCodeFile] = React.useState<string>("");
     const [PCBASNCode, setPCBASNCode] = React.useState<string>("");
     const [snCodeList, setSnCodeList] = React.useState<string[]>([]);
     const [PCBASNCodeList, setPCBASnCodeList] = React.useState<string[]>([]);
@@ -89,12 +90,12 @@ const Main = () => {
         );
 
         const snCode = `${values.pcba}${values.manufacturer}${values.productCode}${currentYear?.value}${currentWeek?.value}${values.country}`;
+        const snCodeFile = `${values.pcba}-${values.manufacturer}-${values.productCode}-${currentYear?.value}-${currentWeek?.value}-${values.country}`;
+        
         const pcbaSNCode = `${values.pcba}0${values.productCode}${currentYear?.value}${currentWeek?.value}00`;
         let history = await window.electronAPI.sqQuery({
             sql: `SELECT * FROM history WHERE snCode = "${snCode}" ORDER BY serial_number DESC LIMIT 1`,
         });
-        console.log(history);
-
         let maxSerial = 0
         if (history.length > 0) {
             maxSerial = history[0].serial_number;
@@ -105,6 +106,7 @@ const Main = () => {
             return
         }
         setSnCode(snCode);
+        setSnCodeFile(snCodeFile);
         setPCBASNCode(pcbaSNCode);
         setMaxSerial(maxSerial);
 
@@ -215,7 +217,7 @@ const Main = () => {
         for (let i = 0; i < snCodeList.length; i++) {
             sampleData.push([`${i + 1}`, snCodeList[i], PCBASNCodeList[i]]);
         }
-        exportToExcel(sampleData, `${order}${snCode}`);
+        exportToExcel(sampleData, `${order}-${snCodeFile}`);
     };
 
 
